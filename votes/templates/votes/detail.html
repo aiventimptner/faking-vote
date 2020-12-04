@@ -1,0 +1,26 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Abstimmung</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ decision.subject }}</h5>
+                <div class="card-subtitle mb-2 text-muted">{{ decision.created }}</div>
+                <form action="{% url 'votes:vote' decision.id %}" method="post">
+                {% csrf_token %}
+                {% for option in decision.option_set.all %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+                        <label class="form-check-label" for="option{{ forloop.counter }}">
+                            {{ option.text }}
+                        </label>
+                    </div>
+                {% endfor %}
+                    <button type="submit" class="btn btn-primary">Abstimmen</button>
+                </form>
+            </div>
+            <div class="card-footer">{{ decision.author.get_full_name }}</div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="{% static 'votes/css/bootstrap.min.css' %}">
+
+        <title>Votes</title>
+    </head>
+    <body>
+        {% include 'votes/navigation.html' %}
+
+        {% block content %}{% endblock %}
+
+        <script src="{% static 'votes/js/bootstrap.bundle.min.js' %}"></script>
+    </body>
+</html>

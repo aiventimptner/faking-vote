@@ -1,0 +1,14 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Offene Abstimmungen</h1>
+        <div class="list-group">
+        {% for decision in object_list %}
+            <a href="{% url 'votes:detail' decision.id %}" class="list-group-item list-group-item-action">{{ decision.subject }}</a>
+        {% empty %}
+            <p class="list-group-item disabled">Aktuell sind keine Abstimmungen verfügbar.</p>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}
