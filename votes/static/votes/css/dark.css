@@ -1,11 +1,22 @@
 :root {
-    --primary-color: #3c3c41;
+    --primary-color: #29282d;
+    --text-color: #bfdd34;
 }
 
 body {
-    background-color: var(--primary-color);
+    background-color: #3c3c41;
 }
 
 nav.navbar {
-    background-color: #29282d;
+    background-color: var(--primary-color);
+}
+
+ul.errorlist {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul.errorlist > li {
+    font-size: 0.8rem;
+    color: #b71b06;
 }

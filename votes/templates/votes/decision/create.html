@@ -1,0 +1,36 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="card mt-3 mx-auto w-50">
+            <div class="card-body">
+                <h3 class="card-title">Neue Abstimmung</h3>
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        {{ form.subject.label_tag }}
+                        {{ form.subject }}
+                        {{ form.subject.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.start.label_tag }}
+                        {{ form.start }}
+                        {{ form.start.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.end.label_tag }}
+                        {{ form.end }}
+                        {{ form.end.errors }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Erstellen</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

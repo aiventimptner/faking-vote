@@ -13,12 +13,6 @@ class Decision(models.Model):
     def __str__(self):
         return f"{self.subject}"
 
-    class Meta:
-        constraints = [
-            # TODO check end_date > start_date
-            # TODO check start_date >= created
-        ]
-
 
 class Option(models.Model):
     decision = models.ForeignKey(Decision, on_delete=models.CASCADE)
