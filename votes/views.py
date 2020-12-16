@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, FormMixin
 
 from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
@@ -29,9 +30,10 @@ class DecisionCreate(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class DecisionInfo(DetailView):
+class DecisionInfo(LoginRequiredMixin, DetailView):
     template_name = 'votes/decision/info.html'
     model = Decision
+    form_class = VoteForm
 
     def get_context_data(self, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
@@ -68,6 +70,26 @@ class VoteCreate(LoginRequiredMixin, FormView):
         context = super().get_context_data()
         context['decision'] = get_object_or_404(Decision, pk=self.kwargs['pk'])
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['decision_id'] = self.kwargs['pk']
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        decision = Decision.objects.get(pk=self.kwargs['pk'])
+        votes = Vote.objects.filter(
+            user=self.request.user,
+            option__in=[option.id for option in decision.option_set.all()],
+        ).all()
+        if votes:
+            return HttpResponseForbidden("User has already voted")
+        elif timezone.now() < decision.start:
+            return HttpResponseForbidden("Voting has not started yet")
+        elif timezone.now() > decision.end:
+            return HttpResponseForbidden("Vote is already finished")
+        else:
+            return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.user = self.request.user

@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .models import Decision, Vote
+from .models import Decision, Option, Vote
 
 
 class DecisionForm(forms.ModelForm):
@@ -45,36 +45,33 @@ class DecisionForm(forms.ModelForm):
         }
         widgets = {
             'subject': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': "form-control",
                 'rows': 3,
                 'placeholder': "Es sind maximal 255 Zeichen erlaubt.",
             }),
             'start': forms.DateTimeInput(attrs={
-                'class': 'form-control',
+                'class': "form-control",
                 'placeholder': datetime.now().strftime("%d.%m.%Y %H:%M"),
             }),
             'end': forms.DateTimeInput(attrs={
-                'class': 'form-control',
+                'class': "form-control",
                 'placeholder': (datetime.now() + timedelta(minutes=15)).strftime("%d.%m.%Y %H:%M"),
             }),
         }
 
 
 class VoteForm(forms.ModelForm):
-    def clean(self):
-        cleaned_data = super().clean()
-        option = cleaned_data.get('option')
-
-        if option:
-            if timezone.now() < option.decision.start:
-                raise ValidationError("Die Abstimmung hat noch nicht begonnen!", code='invalid')
-
-            if timezone.now() > option.decision.end:
-                raise ValidationError("Die Abstimmung ist bereits zu Ende!", code='invalid')
+    def __init__(self, *args, **kwargs):
+        self.decision_id = kwargs.pop('decision_id')
+        super().__init__(*args, **kwargs)
+        options = Option.objects.filter(decision__id=self.decision_id).all()
+        self.fields['option'].queryset = options
 
     class Meta:
         model = Vote
         fields = ['option']
         widgets = {
-            'option': forms.RadioSelect(),
+            'option': forms.RadioSelect(attrs={
+                'class': "form-check-input me-1",
+            }),
         }
