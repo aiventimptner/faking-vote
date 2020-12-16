@@ -3,12 +3,60 @@
 {% block content %}
     <div class="container">
         <h1 class="text-light mt-3">Offene Abstimmungen</h1>
-        <div class="list-group">
-        {% for decision in object_list %}
-            <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action">{{ decision.subject }}</a>
-        {% empty %}
-            <p class="list-group-item list-group-item-warning">Aktuell sind keine Abstimmungen verfügbar.</p>
-        {% endfor %}
+        <div class="row">
+            <div class="col-md-3 order-md-last mb-3 mb-md-0">
+                <div class="card bg-dark text-light">
+                    <div class="card-header">Informationen</div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Die folgenden Farben geben den entsprechenden Status einer Abstimmung an.
+                        </p>
+                    </div>
+                    <ul class="list-group list-group-flush text-dark">
+                        <li class="list-group-item list-group-item-warning">Abstimmung wartet auf Beginn.</li>
+                        <li class="list-group-item list-group-item-success">Abstimmung läuft aktuell!</li>
+                        <li class="list-group-item list-group-item-danger">Abstimmung ist vorüber.</li>
+                    </ul>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Die Zeitangaben auf der rechten Seite eines Eintrags ändern
+                            sich entsprechend dem aktuellen Status der Abstimmung.
+                            Ein (S) gibt den Zeitpunkt des Beginns einer Abstimmung an.
+                            Ein (E) gibt den Zeitpunkt des Endes einer Abstimmung an.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="list-group">
+                {% for decision in object_list %}
+                    {% if decision.vote_in_progress %}
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-success">
+                            <div class="d-flex w-100 justify-content-between">
+                                {{ decision.subject }}
+                                <small>(E) {{ decision.end }}</small>
+                            </div>
+                        </a>
+                    {% elif decision.vote_closed %}
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-danger">
+                            <div class="d-flex w-100 justify-content-between">
+                                {{ decision.subject }}
+                                <small>(E) {{ decision.end }}</small>
+                            </div>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-warning">
+                            <div class="d-flex w-100 justify-content-between">
+                                {{ decision.subject }}
+                                <small>(S) {{ decision.start }}</small>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% empty %}
+                    <p class="list-group-item list-group-item-warning">Aktuell sind keine Abstimmungen verfügbar.</p>
+                {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

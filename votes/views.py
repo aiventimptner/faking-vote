@@ -1,9 +1,10 @@
+from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, FormMixin
+from django.views.generic.edit import FormView
 
 from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
@@ -13,7 +14,9 @@ class DecisionIndex(ListView):
     template_name = 'votes/index.html'
 
     def get_queryset(self):
-        return Decision.objects.order_by('created')
+        dt = timezone.now() - timedelta(minutes=5)
+        pending_decisions = Decision.objects.filter(end__gt=dt).order_by('start').all()
+        return pending_decisions
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):

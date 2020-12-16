@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Decision(models.Model):
@@ -12,6 +13,12 @@ class Decision(models.Model):
 
     def __str__(self):
         return f"{self.subject}"
+
+    def vote_in_progress(self):
+        return self.start < timezone.now() < self.end
+
+    def vote_closed(self):
+        return timezone.now() > self.end
 
 
 class Option(models.Model):
