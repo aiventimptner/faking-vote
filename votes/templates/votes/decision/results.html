@@ -1,0 +1,15 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-light mt-3">Alle abgeschlossenen Abstimmungen</h1>
+        <div class="list-group">
+            {% for decision in object_list %}
+                <a href="{% url 'votes:result' decision.id %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+                    {{ decision }}
+                    <small>{{ decision.end }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -11,12 +11,13 @@ from .models import Decision, Option, Vote
 
 
 class DecisionIndex(ListView):
+    model = Decision
     template_name = 'votes/index.html'
 
     def get_queryset(self):
         dt = timezone.now() - timedelta(minutes=5)
-        pending_decisions = Decision.objects.filter(end__gt=dt).order_by('start').all()
-        return pending_decisions
+        decisions = Decision.objects.filter(end__gt=dt).order_by('start').all()
+        return decisions
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
@@ -62,6 +63,25 @@ class DecisionInfo(LoginRequiredMixin, DetailView):
             'message': message,
         }
         return context
+
+
+class DecisionResults(ListView):
+    model = Decision
+    template_name = 'votes/decision/results.html'
+
+    def get_queryset(self):
+        return Decision.objects.filter(end__lt=timezone.now()).order_by('-end').all()
+
+
+class DecisionResult(DetailView):
+    template_name = 'votes/decision/result.html'
+    model = Decision
+
+    def get(self, request, *args, **kwargs):
+        decision = Decision.objects.get(pk=self.kwargs['pk'])
+        if timezone.now() < decision.end:
+            return HttpResponseForbidden("Result can only be viewed after the end of voting")
+        return super().get(request, *args, **kwargs)
 
 
 class VoteCreate(LoginRequiredMixin, FormView):

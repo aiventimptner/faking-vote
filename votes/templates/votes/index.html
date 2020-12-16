@@ -31,29 +31,23 @@
                 <div class="list-group">
                 {% for decision in object_list %}
                     {% if decision.vote_in_progress %}
-                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-success">
-                            <div class="d-flex w-100 justify-content-between">
-                                {{ decision.subject }}
-                                <small>(E) {{ decision.end }}</small>
-                            </div>
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-success d-flex justify-content-between">
+                            {{ decision.subject }}
+                            <small>(E) {{ decision.end }}</small>
                         </a>
                     {% elif decision.vote_closed %}
-                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-danger">
-                            <div class="d-flex w-100 justify-content-between">
-                                {{ decision.subject }}
-                                <small>(E) {{ decision.end }}</small>
-                            </div>
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-danger d-flex justify-content-between">
+                            {{ decision.subject }}
+                            <small>(E) {{ decision.end }}</small>
                         </a>
                     {% else %}
-                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-warning">
-                            <div class="d-flex w-100 justify-content-between">
-                                {{ decision.subject }}
-                                <small>(S) {{ decision.start }}</small>
-                            </div>
+                        <a href="{% url 'votes:info' decision.id %}" class="list-group-item list-group-item-action list-group-item-warning d-flex justify-content-between">
+                            {{ decision.subject }}
+                            <small>(S) {{ decision.start }}</small>
                         </a>
                     {% endif %}
                 {% empty %}
-                    <p class="list-group-item list-group-item-warning">Aktuell sind keine Abstimmungen verfügbar.</p>
+                    <p class="list-group-item list-group-item-secondary">Aktuell sind keine Abstimmungen verfügbar.</p>
                 {% endfor %}
                 </div>
             </div>
