@@ -25,3 +25,7 @@ ul.errorlist > li {
     font-size: 0.8rem;
     color: #b71b06;
 }
+
+div.http-error h1.display-1 {
+    color: var(--text-color);
+}

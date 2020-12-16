@@ -1,0 +1,5 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    {% include 'error.html' with code="500" status="Internal Server Error" message="Da ist bei uns wohl etwas schief gelaufen. Einfach noch einmal probieren!" %}
+{% endblock %}

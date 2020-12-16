@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -80,7 +80,7 @@ class DecisionResult(DetailView):
     def get(self, request, *args, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
         if timezone.now() < decision.end:
-            return HttpResponseForbidden("Result can only be viewed after the end of voting")
+            raise PermissionDenied()
         return super().get(request, *args, **kwargs)
 
 
@@ -106,11 +106,11 @@ class VoteCreate(LoginRequiredMixin, FormView):
             option__in=[option.id for option in decision.option_set.all()],
         ).all()
         if votes:
-            return HttpResponseForbidden("User has already voted")
+            raise PermissionDenied()
         elif timezone.now() < decision.start:
-            return HttpResponseForbidden("Voting has not started yet")
+            raise PermissionDenied()
         elif timezone.now() > decision.end:
-            return HttpResponseForbidden("Vote is already finished")
+            raise PermissionDenied()
         else:
             return super().post(request, *args, **kwargs)
 
