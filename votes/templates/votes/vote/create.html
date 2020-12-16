@@ -1,0 +1,48 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <div class="card mt-3 mx-auto w-50">
+                <div class="card-body">
+                    <h3 class="card-title">{{ decision.subject }}</h3>
+                    <p class="card-text">Zeitraum der Abstimmung:</p>
+                </div>
+                <table class="table table-borderless mx-5">
+                    <tbody>
+                        <tr>
+                            <th>Beginn</th>
+                            <td>{{ decision.start }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ende</th>
+                            <td>{{ decision.end }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="card-body">
+                    <p class="card-text">
+                        Die folgenden Optionen stehen zur Auswahl:
+                    </p>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for option in decision.option_set.all %}
+                        <label for="id_option_{{ forloop.counter0 }}" class="list-group-item">
+                            <input id="id_option_{{ forloop.counter0 }}" class="form-check-input me-1" type="radio" name="option" value="{{ option.id }}" required="">
+                            {{ option.text }}
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="card-body">
+                    {{ form.option.errors }}
+                    <button type="submit" class="btn btn-warning">Abstimmen</button>
+                    {{ form.non_field_errors }}
+                </div>
+                <div class="card-footer text-muted">
+                    <small>Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.</small>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

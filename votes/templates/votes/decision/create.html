@@ -8,8 +8,6 @@
                 <form method="post">
                     {% csrf_token %}
 
-                    {{ form.non_field_errors }}
-
                     <div class="mb-3">
                         {{ form.subject.label_tag }}
                         {{ form.subject }}
@@ -29,6 +27,8 @@
                     </div>
 
                     <button type="submit" class="btn btn-success">Erstellen</button>
+
+                    {{ form.non_field_errors }}
                 </form>
             </div>
         </div>

@@ -29,6 +29,14 @@
                     <li class="list-group-item">{{ option.text }}</li>
                 {% endfor %}
             </ul>
+            <div class="card-body">
+                {% if status.voting_permitted %}
+                    <a href="{% url 'votes:vote' decision.id %}" class="btn btn-primary">Zur Abstimmung</a>
+                {% else %}
+                    <a href="{% url 'votes:vote' decision.id %}" class="btn btn-secondary disabled">Zur Abstimmung</a>
+                    <span class="text-danger">{{ status.message }}</span>
+                {% endif %}
+            </div>
             <div class="card-footer text-muted">
                 <small>Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.</small>
             </div>

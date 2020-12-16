@@ -16,6 +16,11 @@ ul.errorlist {
     padding-left: 0;
 }
 
+ul.errorlist.nonfield {
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+
 ul.errorlist > li {
     font-size: 0.8rem;
     color: #b71b06;

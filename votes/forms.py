@@ -3,10 +3,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .models import Decision
+from .models import Decision, Vote
 
 
-class CreateDecisionForm(forms.ModelForm):
+class DecisionForm(forms.ModelForm):
     def clean_start(self):
         data = self.cleaned_data['start']
         if data < timezone.now():
@@ -57,4 +57,24 @@ class CreateDecisionForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': (datetime.now() + timedelta(minutes=15)).strftime("%d.%m.%Y %H:%M"),
             }),
+        }
+
+
+class VoteForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = super().clean()
+        option = cleaned_data.get('option')
+
+        if option:
+            if timezone.now() < option.decision.start:
+                raise ValidationError("Die Abstimmung hat noch nicht begonnen!", code='invalid')
+
+            if timezone.now() > option.decision.end:
+                raise ValidationError("Die Abstimmung ist bereits zu Ende!", code='invalid')
+
+    class Meta:
+        model = Vote
+        fields = ['option']
+        widgets = {
+            'option': forms.RadioSelect(),
         }
