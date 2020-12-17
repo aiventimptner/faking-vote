@@ -5,7 +5,7 @@
         <div class="card mt-3 mx-auto w-50">
             <div class="card-body">
                 <h3 class="card-title">Neue Abstimmung</h3>
-                <form method="post">
+                <form method="post" action="{% url 'votes:create' %}">
                     {% csrf_token %}
 
                     <div class="mb-3">

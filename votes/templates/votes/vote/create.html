@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="container">
-        <form method="post">
+        <form method="post" action="{% url 'votes:vote' decision.id %}">
             {% csrf_token %}
             <div class="card mt-3 mx-auto w-50">
                 <div class="card-body">
