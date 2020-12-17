@@ -78,7 +78,7 @@ class DecisionResult(DetailView):
     model = Decision
 
     def get(self, request, *args, **kwargs):
-        decision = Decision.objects.get(pk=self.kwargs['pk'])
+        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
         if timezone.now() < decision.end:
             raise PermissionDenied()
         return super().get(request, *args, **kwargs)
