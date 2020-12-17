@@ -10,7 +10,7 @@ from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
 
 
-class DecisionIndex(ListView):
+class DecisionIndex(LoginRequiredMixin, ListView):
     model = Decision
     template_name = 'votes/index.html'
 
@@ -65,7 +65,7 @@ class DecisionInfo(LoginRequiredMixin, DetailView):
         return context
 
 
-class DecisionResults(ListView):
+class DecisionResults(LoginRequiredMixin, ListView):
     model = Decision
     template_name = 'votes/decision/results.html'
 
@@ -73,7 +73,7 @@ class DecisionResults(ListView):
         return Decision.objects.filter(end__lt=timezone.now()).order_by('-end').all()
 
 
-class DecisionResult(DetailView):
+class DecisionResult(LoginRequiredMixin, DetailView):
     template_name = 'votes/decision/result.html'
     model = Decision
 

@@ -11,7 +11,9 @@
         <title>Votes</title>
     </head>
     <body>
-        {% include 'votes/navigation.html' %}
+        {% if request.path != '/accounts/login/' %}
+            {% include 'votes/navigation.html' %}
+        {% endif %}
 
         {% block content %}{% endblock %}
 

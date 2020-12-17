@@ -1,0 +1,39 @@
+{% extends 'votes/layout.html' %}
+
+{% block content %}
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h3 class="card-title">Anmeldung</h3>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            {{ form.username.label }}
+                        </label>
+                        <input id="{{ form.username.id_for_label }}" type="text" class="form-control" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            {{ form.password.label }}
+                        </label>
+                        <input id="{{ form.password.id_for_label }}" type="password" class="form-control" name="password" autocomplete="current-password" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <small>
+                            <a href="{% url 'password_reset' %}" class="text-decoration-none link-secondary">Passwort vergessen?</a>
+                        </small>
+                    </div>
+                    {% if form.errors %}
+                        <ul class="errorlist nonfield">
+                            <li>Login fehlgeschlagen. Bitte erneut probieren.</li>
+                        </ul>
+                    {% endif %}
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
