@@ -1,22 +1,26 @@
-{% load static %}
-<!doctype html>
+<!DOCTYPE html>{% load static %}
 <html lang="de">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <link rel="stylesheet" href="{% static 'votes/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'votes/css/dark.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>Votes</title>
+
+        <link rel="stylesheet" href="{% static 'votes/css/bulma.min.css' %}">
+        <link rel="stylesheet" href="{% static 'votes/css/style.css' %}">
+
+        <script src="{% static 'votes/js/font-awesome.js' %}"></script>
+        <script src="{% static 'votes/js/navbar-burger.js' %}"></script>
+        <script src="{% static 'votes/js/close-notification.js' %}"></script>
     </head>
+
     <body>
         {% if request.path != '/accounts/login/' %}
             {% include 'votes/navigation.html' %}
         {% endif %}
 
-        {% block content %}{% endblock %}
-
-        <script src="{% static 'votes/js/bootstrap.bundle.min.js' %}"></script>
+        <section class="section">
+            {% block content %}{% endblock %}
+        </section>
     </body>
 </html>
