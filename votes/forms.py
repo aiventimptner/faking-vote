@@ -45,16 +45,16 @@ class DecisionForm(forms.ModelForm):
         }
         widgets = {
             'subject': forms.Textarea(attrs={
-                'class': "form-control",
-                'rows': 3,
+                'class': "textarea has-fixed-size",
                 'placeholder': "Es sind maximal 255 Zeichen erlaubt.",
+                'rows': 2,
             }),
             'start': forms.DateTimeInput(attrs={
-                'class': "form-control",
+                'class': "input",
                 'placeholder': datetime.now().strftime("%d.%m.%Y %H:%M"),
             }),
             'end': forms.DateTimeInput(attrs={
-                'class': "form-control",
+                'class': "input",
                 'placeholder': (datetime.now() + timedelta(minutes=15)).strftime("%d.%m.%Y %H:%M"),
             }),
         }
