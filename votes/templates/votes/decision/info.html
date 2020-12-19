@@ -2,44 +2,40 @@
 
 {% block content %}
     <div class="container">
-        <div class="card mt-3 mx-auto w-50">
-            <div class="card-body">
-                <h3 class="card-title">{{ decision.subject }}</h3>
-                <p class="card-text">Zeitraum der Abstimmung:</p>
+        <div class="box">
+            <h1 class="title is-4">{{ decision.subject }}</h1>
+            <p class="subtitle is-size-7">
+                Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.
+            </p>
+
+            <div class="block content">
+                Zeitraum der Abstimmung:
+                <dl>
+                    <dt>
+                        <strong>Beginn</strong>
+                    </dt>
+                    <dd>{{ decision.start }}</dd>
+
+                    <dt>
+                        <strong>Ende</strong>
+                    </dt>
+                    <dd>{{ decision.end }}</dd>
+                </dl>
             </div>
-            <table class="table table-borderless mx-5">
-                <tbody>
-                    <tr>
-                        <th>Beginn</th>
-                        <td>{{ decision.start }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ende</th>
-                        <td>{{ decision.end }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="card-body">
-                <p class="card-text">
-                    Die folgenden Optionen stehen bei der Abstimmung zur Auswahl:
-                </p>
+
+            <div class="block content">
+                Die folgenden Optionen stehen bei der Abstimmung zur Auswahl:
+                <ul>
+                    {% for option in decision.option_set.all %}
+                        <li>{{ option.text }}</li>
+                    {% endfor %}
+                </ul>
             </div>
-            <ul class="list-group list-group-flush">
-                {% for option in decision.option_set.all %}
-                    <li class="list-group-item">{{ option.text }}</li>
-                {% endfor %}
-            </ul>
-            <div class="card-body">
-                {% if status.voting_permitted %}
-                    <a href="{% url 'votes:vote' decision.id %}" class="btn btn-primary">Zur Abstimmung</a>
-                {% else %}
-                    <a href="{% url 'votes:vote' decision.id %}" class="btn btn-secondary disabled">Zur Abstimmung</a>
-                    <span class="text-danger">{{ status.message }}</span>
-                {% endif %}
-            </div>
-            <div class="card-footer text-muted">
-                <small>Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.</small>
-            </div>
+
+            <a href="{% url 'votes:vote' decision.id %}" class="button is-primary">Zur Abstimmung</a>
+            {% if decision.state != 'open' %}
+                <p class="help is-danger">{{ status.message }}</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
