@@ -14,11 +14,38 @@ class Decision(models.Model):
     def __str__(self):
         return f"{self.subject}"
 
-    def vote_in_progress(self):
-        return self.start < timezone.now() < self.end
+    def state(self):
+        moment = timezone.now()
 
-    def vote_closed(self):
-        return timezone.now() > self.end
+        if moment < self.start:
+            return 'pending'
+
+        if self.start <= moment < self.end:
+            return 'open'
+
+        return 'closed'
+
+    def icon(self):
+        state = self.state()
+        if state == 'pending':
+            return {
+                'color': "has-text-warning",
+                'class': "fas fa-clock",
+            }
+
+        if state == 'open':
+            return {
+                'color': "has-text-success",
+                'class': "fas fa-vote-yea",
+            }
+
+        if state == 'closed':
+            return {
+                'color': "has-text-danger",
+                'class': "fas fa-lock",
+            }
+
+        return "fas fa-box-ballot"
 
 
 class Option(models.Model):
