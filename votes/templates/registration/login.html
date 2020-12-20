@@ -1,39 +1,35 @@
-{% extends 'votes/layout.html' %}
+{% extends 'votes/base_auth.html' %}
+
+{% block header %}
+    {% include 'votes/snippet_auth.html' with title="Anmeldung" icon="fas fa-question" %}
+{% endblock %}
 
 {% block content %}
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
-        <div class="card" style="width: 25rem;">
-            <div class="card-body">
-                <h3 class="card-title">Anmeldung</h3>
-                <form method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ next }}">
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">
-                            {{ form.username.label }}
-                        </label>
-                        <input id="{{ form.username.id_for_label }}" type="text" class="form-control" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="form-label">
-                            {{ form.password.label }}
-                        </label>
-                        <input id="{{ form.password.id_for_label }}" type="password" class="form-control" name="password" autocomplete="current-password" required>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <small>
-                            <a href="{% url 'password_reset' %}" class="text-decoration-none link-secondary">Passwort vergessen?</a>
-                        </small>
-                    </div>
-                    {% if form.errors %}
-                        <ul class="errorlist nonfield">
-                            <li>Login fehlgeschlagen. Bitte erneut probieren.</li>
-                        </ul>
-                    {% endif %}
+    <form method="post">
+        {% csrf_token %}
 
-                </form>
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="field">
+            <label class="label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            <div class="control">
+                <input id="{{ form.username.id_for_label }}" type="text" class="input" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required>
             </div>
         </div>
-    </div>
+
+        <div class="field">
+            <label class="label" for="{{ form.password.id_for_label }}">
+                {{ form.password.label }}
+            </label>
+            <div class="control">
+                <input id="{{ form.password.id_for_label }}" type="password" class="input" name="password" autocomplete="current-password" required>
+            </div>
+        </div>
+
+        <button type="submit" class="button is-primary">Login</button>
+
+        {% if form.errors %}
+            <p class="help is-danger">Login fehlgeschlagen. Bitte erneut probieren.</p>
+        {% endif %}
+    </form>
 {% endblock %}
