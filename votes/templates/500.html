@@ -1,5 +1,5 @@
-{% extends 'votes/layout.html' %}
+{% extends 'votes/base_info.html' %}
 
-{% block body %}
-    {% include 'error.html' with color="is-warning" code=500 status="Internal Server Error" message="Da ist bei uns wohl etwas schief gelaufen. Einfach noch einmal probieren!" %}
+{% block content %}
+    {% include 'votes/snippet_info.html' with color='warning' title=500 subtitle="Internal Server Error" description="Da ist bei uns wohl etwas schief gelaufen. Einfach noch einmal probieren!" %}
 {% endblock %}
