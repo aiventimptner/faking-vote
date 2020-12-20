@@ -10,9 +10,9 @@ from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
 
 
-class DecisionIndex(LoginRequiredMixin, ListView):
+class DecisionList(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/index.html'
+    template_name = 'votes/decision/list.html'
 
     def get_queryset(self):
         dt = timezone.now() - timedelta(minutes=5)
