@@ -1,5 +1,5 @@
 {% extends 'votes/layout.html' %}
 
-{% block content %}
-    {% include 'error.html' with code="404" status="Not Found" message="Hier ist keine Schatzkiste versteckt. Hast du dich vielleicht vertippt?" %}
+{% block body %}
+    {% include 'error.html' with color="is-warning" code=404 status="Not Found" message="Hier ist keine Schatztruhe versteckt. Hast du dich vielleicht vertippt?" %}
 {% endblock %}

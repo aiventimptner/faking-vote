@@ -1,5 +1,5 @@
 {% extends 'votes/layout.html' %}
 
-{% block content %}
-    {% include 'error.html' with code="403" status="Forbidden" message="Hier geht es nicht weiter. Schade auch..." %}
+{% block body %}
+    {% include 'error.html' with color="is-danger" code=403 status="Forbidden" message="Hier geht es nicht weiter. Schade aber auch ..." %}
 {% endblock %}

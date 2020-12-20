@@ -15,12 +15,14 @@
     </head>
 
     <body>
-        {% if request.path != '/accounts/login/' %}
-            {% include 'votes/navigation.html' %}
-        {% endif %}
+        {% block body %}
+            {% if request.path != '/accounts/login/' %}
+                {% include 'votes/navigation.html' %}
+            {% endif %}
 
-        <section class="section">
-            {% block content %}{% endblock %}
-        </section>
+            <section class="section">
+                {% block content %}{% endblock %}
+            </section>
+        {% endblock %}
     </body>
 </html>
