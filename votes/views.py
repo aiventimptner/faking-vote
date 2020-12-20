@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -16,7 +17,7 @@ class DecisionList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         dt = timezone.now() - timedelta(minutes=5)
-        decisions = Decision.objects.filter(end__gt=dt).order_by('start').all()
+        decisions = Decision.objects.filter(~Q(options__votes__user=self.request.user), end__gt=dt).order_by('start').all()
         return decisions
 
 
@@ -39,31 +40,6 @@ class DecisionInfo(LoginRequiredMixin, DetailView):
     model = Decision
     form_class = VoteForm
 
-    def get_context_data(self, **kwargs):
-        decision = Decision.objects.get(pk=self.kwargs['pk'])
-        votes = Vote.objects.filter(
-            user=self.request.user,
-            option__in=[option.id for option in decision.option_set.all()],
-        ).all()
-
-        voting_permitted = False
-        if votes:
-            message = "Du hast bereits an der Abstimmung teilgenommen!"
-        elif timezone.now() < decision.start:
-            message = "Die Abstimmung hat noch nicht begonnen!"
-        elif timezone.now() > decision.end:
-            message = "Die Abstimmung ist bereits zu Ende!"
-        else:
-            voting_permitted = True
-            message = None
-
-        context = super().get_context_data()
-        context['status'] = {
-            'voting_permitted': voting_permitted,
-            'message': message,
-        }
-        return context
-
 
 class DecisionResults(LoginRequiredMixin, ListView):
     model = Decision
@@ -79,7 +55,7 @@ class DecisionResult(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-        if timezone.now() < decision.end:
+        if decision.state() != 'closed':
             raise PermissionDenied()
         return super().get(request, *args, **kwargs)
 
@@ -99,20 +75,28 @@ class VoteCreate(LoginRequiredMixin, FormView):
         kwargs['decision_id'] = self.kwargs['pk']
         return kwargs
 
+    def get(self, request, *args, **kwargs):
+        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
+
+        if decision.state() != 'open':
+            raise PermissionDenied()
+
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
         votes = Vote.objects.filter(
             user=self.request.user,
-            option__in=[option.id for option in decision.option_set.all()],
+            option__in=[option.id for option in decision.options.all()],
         ).all()
+
+        if decision.state() != 'open':
+            raise PermissionDenied()
+
         if votes:
             raise PermissionDenied()
-        elif timezone.now() < decision.start:
-            raise PermissionDenied()
-        elif timezone.now() > decision.end:
-            raise PermissionDenied()
-        else:
-            return super().post(request, *args, **kwargs)
+
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.user = self.request.user

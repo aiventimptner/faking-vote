@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -25,6 +26,17 @@ class Decision(models.Model):
 
         return 'closed'
 
+    def link(self):
+        state = self.state()
+        if state == 'open':
+            return reverse('votes:vote', kwargs={'pk': self.id})
+
+        if state == 'closed':
+            return reverse('votes:result', kwargs={'pk': self.id})
+
+        else:
+            return reverse('votes:info', kwargs={'pk': self.id})
+
     def icon(self):
         state = self.state()
         if state == 'pending':
@@ -49,7 +61,7 @@ class Decision(models.Model):
 
 
 class Option(models.Model):
-    decision = models.ForeignKey(Decision, on_delete=models.CASCADE)
+    decision = models.ForeignKey(Decision, related_name='options', on_delete=models.CASCADE)
     text = models.CharField(max_length=50)
 
     def __str__(self):
@@ -58,7 +70,7 @@ class Option(models.Model):
 
 class Vote(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    option = models.ForeignKey(Option, on_delete=models.CASCADE)
+    option = models.ForeignKey(Option, related_name='votes', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

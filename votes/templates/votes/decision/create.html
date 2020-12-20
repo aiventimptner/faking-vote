@@ -1,49 +1,47 @@
-{% extends 'votes/base.html' %}
+{% extends 'votes/decision/base_decision.html' %}
 
-{% block content %}
-    <div class="container">
-        <div class="box">
-            <h1 class="title is-4">Neue Abstimmung</h1>
-                <form method="post" action="{% url 'votes:create' %}">
-                    {% csrf_token %}
+{% block column %}
+    <div class="box">
+        <h1 class="title is-4">Neue Abstimmung</h1>
+        <form method="post">
+            {% csrf_token %}
 
-                    <div class="field">
-                        <label class="label" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
-                        <div class="control">
-                            {{ form.subject }}
-                        </div>
-                        {% for error in form.subject.errors %}
-                            <p class="help is-danger">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div class="field">
-                        <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
-                        <div class="control">
-                            {{ form.start }}
-                        </div>
-                        {% for error in form.start.errors %}
-                            <p class="help is-danger">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <div class="field">
-                        <label class="label" for="{{ form.end.id_for_label }}">{{ form.end.label }}</label>
-                        <div class="control">
-                            {{ form.end }}
-                        </div>
-                        {% for error in form.end.errors %}
-                            <p class="help is-danger">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-
-                    <button type="submit" class="button is-primary">Erstellen</button>
-
-                    {% for error in form.non_field_errors %}
-                        <p class="help is-danger">{{ error }}</p>
-                    {% endfor %}
-                </form>
+            <div class="field">
+                <label class="label" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+                <div class="control">
+                    {{ form.subject }}
+                </div>
+                {% for error in form.subject.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
             </div>
+
+            <div class="field">
+                <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
+                <div class="control">
+                    {{ form.start }}
+                </div>
+                {% for error in form.start.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="field">
+                <label class="label" for="{{ form.end.id_for_label }}">{{ form.end.label }}</label>
+                <div class="control">
+                    {{ form.end }}
+                </div>
+                {% for error in form.end.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="button is-primary">Erstellen</button>
+
+            {% for error in form.non_field_errors %}
+                <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </form>
         </div>
     </div>
 {% endblock %}

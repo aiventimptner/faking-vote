@@ -1,40 +1,5 @@
-{% extends 'votes/layout.html' %}
+{% extends 'votes/decision/base_decision.html' %}
 
-{% block content %}
-    <div class="container">
-        <div class="card mt-3 mx-auto w-50">
-            <div class="card-body">
-                <h3 class="card-title">{{ decision.subject }}</h3>
-                <p class="card-text">Zeitraum der Abstimmung:</p>
-            </div>
-            <table class="table table-borderless mx-5">
-                <tbody>
-                    <tr>
-                        <th>Beginn</th>
-                        <td>{{ decision.start }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ende</th>
-                        <td>{{ decision.end }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="card-body">
-                <p class="card-text">
-                    Die Abstimmung hat das folgende Ergebnis:
-                </p>
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for option in decision.option_set.all %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ option.text }}
-                        <span class="badge bg-primary rounded-pill">{{ option.vote_set.count }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="card-footer text-muted">
-                <small>Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.</small>
-            </div>
-        </div>
-    </div>
+{% block column %}
+    {% include 'votes/decision/snippet_detail.html' with show_votes=True %}
 {% endblock %}

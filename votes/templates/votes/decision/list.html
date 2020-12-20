@@ -1,29 +1,5 @@
-{% extends 'votes/base.html' %}
+{% extends 'votes/decision/base_decision.html' %}
 
-{% block content %}
-    <div class="container">
-        <nav class="panel is-primary">
-            <p class="panel-heading">
-                Offene Abstimmungen
-            </p>
-            {% for decision in object_list %}
-                <a href="{% url 'votes:info' decision.id %}" class="panel-block">
-                    <span class="panel-icon {{ decision.icon.color }}">
-                        <i class="{{ decision.icon.class }}" aria-hidden="true"></i>
-                    </span>
-                    <p class="mr-3">{{ decision.subject }}</p>
-
-                    <p class="has-text-grey">
-                        {% if decision.state == 'pending' %}
-                            {{ decision.start }}
-                        {% else %}
-                            {{ decision.end }}
-                        {% endif %}
-                    </p>
-                </a>
-            {% empty %}
-                <p class="panel-block" disabled>Aktuell sind keine Abstimmungen verfügbar.</p>
-            {% endfor %}
-        </nav>
-    </div>
+{% block column %}
+    {% include 'votes/decision/snippet_list.html' with title="Offene Abstimmungen" %}
 {% endblock %}

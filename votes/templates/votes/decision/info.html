@@ -1,41 +1,5 @@
-{% extends 'votes/base.html' %}
+{% extends 'votes/decision/base_decision.html' %}
 
-{% block content %}
-    <div class="container">
-        <div class="box">
-            <h1 class="title is-4">{{ decision.subject }}</h1>
-            <p class="subtitle is-size-7">
-                Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.
-            </p>
-
-            <div class="block content">
-                Zeitraum der Abstimmung:
-                <dl>
-                    <dt>
-                        <strong>Beginn</strong>
-                    </dt>
-                    <dd>{{ decision.start }}</dd>
-
-                    <dt>
-                        <strong>Ende</strong>
-                    </dt>
-                    <dd>{{ decision.end }}</dd>
-                </dl>
-            </div>
-
-            <div class="block content">
-                Die folgenden Optionen stehen bei der Abstimmung zur Auswahl:
-                <ul>
-                    {% for option in decision.option_set.all %}
-                        <li>{{ option.text }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <a href="{% url 'votes:vote' decision.id %}" class="button is-primary">Zur Abstimmung</a>
-            {% if decision.state != 'open' %}
-                <p class="help is-danger">{{ status.message }}</p>
-            {% endif %}
-        </div>
-    </div>
+{% block column %}
+    {% include 'votes/decision/snippet_detail.html' %}
 {% endblock %}

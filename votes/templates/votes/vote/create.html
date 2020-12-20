@@ -1,48 +1,35 @@
-{% extends 'votes/layout.html' %}
+{% extends 'votes/decision/base_decision.html' %}
 
-{% block content %}
-    <div class="container">
-        <form method="post" action="{% url 'votes:vote' decision.id %}">
+{% block column %}
+    <div class="box">
+        <h1 class="title is-4">Abstimmen</h1>
+
+        <p>{{ decision.subject }}</p>
+
+        <form method="post">
             {% csrf_token %}
-            <div class="card mt-3 mx-auto w-50">
-                <div class="card-body">
-                    <h3 class="card-title">{{ decision.subject }}</h3>
-                    <p class="card-text">Zeitraum der Abstimmung:</p>
-                </div>
-                <table class="table table-borderless mx-5">
-                    <tbody>
-                        <tr>
-                            <th>Beginn</th>
-                            <td>{{ decision.start }}</td>
-                        </tr>
-                        <tr>
-                            <th>Ende</th>
-                            <td>{{ decision.end }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="card-body">
-                    <p class="card-text">
-                        Die folgenden Optionen stehen zur Auswahl:
-                    </p>
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for radio in form.option %}
-                        <label for="{{ radio.id_for_label }}" class="list-group-item">
+
+            <div class="field">
+                {% for radio in form.option %}
+                    <div class="control">
+                        <label class="radio" for="{{ radio.id_for_label }}">
                             {{ radio.tag }}
                             {{ radio.choice_label }}
                         </label>
-                    {% endfor %}
-                </div>
-                <div class="card-body">
-                    {{ form.option.errors }}
-                    <button type="submit" class="btn btn-warning">Abstimmen</button>
-                    {{ form.non_field_errors }}
-                </div>
-                <div class="card-footer text-muted">
-                    <small>Die Abstimmung wurde von {{ decision.author.get_full_name }} am {{ decision.created|date }} erstellt.</small>
-                </div>
+                    </div>
+                {% endfor %}
+
+                {% for error in form.subject.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
             </div>
+
+            <button type="submit" class="button is-primary">Abstimmen</button>
+
+            {% for error in form.non_field_errors %}
+                <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
         </form>
+        </div>
     </div>
 {% endblock %}

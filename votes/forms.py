@@ -64,14 +64,13 @@ class VoteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.decision_id = kwargs.pop('decision_id')
         super().__init__(*args, **kwargs)
-        options = Option.objects.filter(decision__id=self.decision_id).all()
-        self.fields['option'].queryset = options
+        self.fields['option'].queryset = Option.objects.filter(decision__id=self.decision_id).all()
 
     class Meta:
         model = Vote
         fields = ['option']
         widgets = {
             'option': forms.RadioSelect(attrs={
-                'class': "form-check-input me-1",
+                'class': "radio",
             }),
         }
