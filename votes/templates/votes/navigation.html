@@ -1,0 +1,21 @@
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item has-text-primary has-text-weight-bold" href="{% url 'votes:index' %}">VOTES</a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="{% url 'votes:create' %}">Neue Abstimmung</a>
+            <a class="navbar-item" href="{% url 'votes:results' %}">Ergebnisse</a>
+        </div>
+        <div class="navbar-end">
+            <a class="navbar-item" href="{% url 'password_change' %}">Passwort ändern</a>
+            <a class="navbar-item" href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+</nav>

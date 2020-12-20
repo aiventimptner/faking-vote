@@ -17,6 +17,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 # Application definition
 
 INSTALLED_APPS = [
+    'votes.apps.VotesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,6 +68,19 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
     }
 }
+
+
+# E-Mail
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST = os.getenv('SMTP_HOST')
+
+EMAIL_PORT = os.getenv('SMTP_PORT')
+
+EMAIL_HOST_USER = os.getenv('SMTP_USERNAME')
+
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
 
 
 # Password validation
