@@ -14,34 +14,60 @@
         <form method="post">
             {% csrf_token %}
 
-            <div class="field">
-                <label class="label" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
-                <div class="control">
-                    {{ form.subject }}
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+                        <div class="control">
+                            {{ form.subject }}
+                        </div>
+                        {% for error in form.subject.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
+
+                        {% include 'votes/decision/snippet_datetime_input.html' with field=form.start %}
+
+                        {% for error in form.start.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="{{ form.end.id_for_label }}">{{ form.end.label }}</label>
+
+                        {% include 'votes/decision/snippet_datetime_input.html' with field=form.end %}
+
+                        {% for error in form.end.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% for error in form.subject.errors %}
-                    <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
 
-            <div class="field">
-                <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
+                <div class="column is-one-third">
+                    <div class="field">
+                        <label class="label" for="{{ form.voters.id_for_label }}">{{ form.voters.label }}</label>
 
-                {% include 'votes/decision/snippet_datetime_input.html' with field=form.start %}
+                        <div class="select is-multiple">
+                            {{ form.voters }}
+                        </div>
 
-                {% for error in form.start.errors %}
-                    <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
+                        <p class="help">
+                            Benutze <code>shift</code> zum Markieren von mehreren Personen.
+                        </p>
 
-            <div class="field">
-                <label class="label" for="{{ form.end.id_for_label }}">{{ form.end.label }}</label>
+                        <p class="help">
+                            Benutze <code>cmd</code> bzw. <code>strg</code> zum Auswählen von mehreren Personen.
+                        </p>
 
-                {% include 'votes/decision/snippet_datetime_input.html' with field=form.end %}
-
-                {% for error in form.end.errors %}
-                    <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
+                        {% for error in form.voters.errors %}
+                            <p class="help is-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
 
             <div class="field">
