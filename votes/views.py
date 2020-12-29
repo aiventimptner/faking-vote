@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
@@ -27,7 +28,7 @@ class Decisions(LoginRequiredMixin, ListView):
 class DecisionCreate(LoginRequiredMixin, FormView):
     template_name = 'votes/decision/create.html'
     form_class = DecisionForm
-    success_url = '/'
+    success_url = reverse_lazy('votes:decisions')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -66,7 +67,7 @@ class DecisionResult(LoginRequiredMixin, DetailView):
 class VoteCreate(LoginRequiredMixin, FormView):
     template_name = 'votes/vote/create.html'
     form_class = VoteForm
-    success_url = '/'
+    success_url = reverse_lazy('votes:decisions')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
