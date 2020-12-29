@@ -2,34 +2,45 @@
 
 {% block column %}
     <div class="box">
-        <h1 class="title is-4">Abstimmen</h1>
+        <h1 class="title is-4">Stimme abgeben</h1>
 
-        <p>{{ decision.subject }}</p>
+        {% if entitled_to_vote %}
+            <p class="subtitle">{{ decision.subject }}</p>
 
-        <form method="post">
-            {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-            <div class="field">
-                {% for radio in form.option %}
-                    <div class="control">
-                        <label class="radio" for="{{ radio.id_for_label }}">
-                            {{ radio.tag }}
-                            {{ radio.choice_label }}
-                        </label>
-                    </div>
-                {% endfor %}
+                <div class="field">
+                    {% for radio in form.option %}
+                        <div class="control">
+                            <label class="radio" for="{{ radio.id_for_label }}">
+                                {{ radio.tag }}
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
 
-                {% for error in form.subject.errors %}
+                    {% for error in form.subject.errors %}
+                        <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="button is-primary">Abstimmen</button>
+
+                {% for error in form.non_field_errors %}
                     <p class="help is-danger">{{ error }}</p>
                 {% endfor %}
+            </form>
             </div>
-
-            <button type="submit" class="button is-primary">Abstimmen</button>
-
-            {% for error in form.non_field_errors %}
-                <p class="help is-danger">{{ error }}</p>
-            {% endfor %}
-        </form>
-        </div>
+        {% else %}
+            <div class="notification is-danger">
+                <p class="block">
+                    <strong>Du bist nicht stimmberechtigt!</strong> Solltest du fälschlicherweise doch
+                    zur Stimmabgabe berechtigt sein, so wende dich an die Person, welche die Abstimmung
+                    erstellt hat. Diese findest du in der Übersicht zur Abstimmung unter "Ersteller:in".
+                </p>
+                <a class="button is-light" href="{% url 'votes:info' decision.id %}">Zurück zur Übersicht</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

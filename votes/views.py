@@ -75,8 +75,10 @@ class VoteCreate(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('votes:decisions')
 
     def get_context_data(self, **kwargs):
+        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
         context = super().get_context_data()
-        context['decision'] = get_object_or_404(Decision, pk=self.kwargs['pk'])
+        context['decision'] = decision
+        context['entitled_to_vote'] = self.request.user in decision.voters.all()
         return context
 
     def get_form_kwargs(self):
@@ -84,25 +86,24 @@ class VoteCreate(LoginRequiredMixin, FormView):
         kwargs['decision_id'] = self.kwargs['pk']
         return kwargs
 
-    def get(self, request, *args, **kwargs):
-        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-
-        if decision.state() != 'open':
-            raise PermissionDenied()
-
-        return super().get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
+
+        if self.request.user not in decision.voters.all():
+            # user not entitled to vote
+            raise PermissionDenied()
+
+        if decision.state() != 'open':
+            # voting not allowed
+            raise PermissionDenied()
+
         votes = Vote.objects.filter(
             user=self.request.user,
             option__in=[option.id for option in decision.options.all()],
         ).all()
 
-        if decision.state() != 'open':
-            raise PermissionDenied()
-
         if votes:
+            # user already voted
             raise PermissionDenied()
 
         return super().post(request, *args, **kwargs)
