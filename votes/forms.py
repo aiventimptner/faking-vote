@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -51,11 +51,11 @@ class DecisionForm(forms.ModelForm):
             }),
             'start': forms.DateTimeInput(attrs={
                 'class': "input",
-                'placeholder': datetime.now().strftime("%d.%m.%Y %H:%M"),
+                'placeholder': "31.12.2099 16:30",
             }),
             'end': forms.DateTimeInput(attrs={
                 'class': "input",
-                'placeholder': (datetime.now() + timedelta(minutes=15)).strftime("%d.%m.%Y %H:%M"),
+                'placeholder': "31.12.2099 16:45",
             }),
         }
 
