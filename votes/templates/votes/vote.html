@@ -8,11 +8,17 @@
         <div class="block">
             <div class="notification is-{{ decision.state.color }}">
                 <button class="delete"></button>
-                {{ decision.state.message }}
+                {% if decision.state.code == 'pending' %}
+                    Die Abstimmung beginnt erst in einiger Zeit. Du musst dich noch bis {{ decision.start }} gedulden.
+                {% elif decision.state.code == 'open' %}
+                    Die Abstimmung läuft aktuell. Du hast bis {{ decision.end }} die Möglichkeit deine Stimme abzugeben.
+                {% else %}
+                    Die Abstimmung ist bereits zu Ende.
+                {% endif %}
+            </div>
         </div>
 
         {% if entitled_to_vote %}
-
             <form method="post">
                 {% csrf_token %}
 
@@ -41,7 +47,6 @@
 
                 </fieldset>
             </form>
-            </div>
         {% else %}
             <div class="notification is-danger">
                 <p class="block">

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.utils import timezone
 
 
@@ -25,9 +24,6 @@ class Decision(models.Model):
                 'code': "pending",
                 'color': "warning",
                 'icon': "fas fa-clock",
-                'message': "Die Abstimmung ist noch nicht gestartet. "
-                           f"Sie beginnt am {self.start.strftime('%d.%m.%Y')} "
-                           f"um {self.start.strftime('%H:%M')} Uhr.",
             }
 
         if self.start <= moment < self.end:
@@ -36,10 +32,6 @@ class Decision(models.Model):
                 'code': "open",
                 'color': "success",
                 'icon': "fas fa-vote-yea",
-                'message': "Die Abstimmung läuft aktuell! Stimme jetzt ab. "
-                           f"Du hast bis zum {self.end.strftime('%d.%m.%Y')} "
-                           f"um {self.end.strftime('%H:%M')} Uhr die Möglichkeit "
-                           "deine Stimme abzugeben.",
             }
 
         # voting closed
@@ -47,7 +39,6 @@ class Decision(models.Model):
             'code': "closed",
             'color': "danger",
             'icon': "fas fa-lock",
-            'message': "Die Abstimmung ist bereits beendet."
         }
 
 

@@ -64,7 +64,7 @@ class DecisionResult(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-        if decision.state() != 'closed':
+        if decision.state()['code'] != 'closed':
             raise PermissionDenied()
         return super().get(request, *args, **kwargs)
 
@@ -93,7 +93,7 @@ class VoteCreate(LoginRequiredMixin, FormView):
             # user not entitled to vote
             raise PermissionDenied()
 
-        if decision.state() != 'open':
+        if decision.state()['code'] != 'open':
             # voting not allowed
             raise PermissionDenied()
 
