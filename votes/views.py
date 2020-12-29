@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -36,10 +35,13 @@ class Decisions(LoginRequiredMixin, ListView):
     template_name = 'votes/pending.html'
 
     def get_queryset(self):
-        return Decision.objects.filter(
-            Q(voters__in=[self.request.user]),
+        decisions = Decision.objects.filter(
+            voters__in=[self.request.user],
             end__gt=timezone.now(),
+        ).exclude(
+            options__votes__user=self.request.user,
         ).order_by('start')
+        return decisions
 
 
 class DecisionsOwned(LoginRequiredMixin, ListView):
