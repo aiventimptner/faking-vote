@@ -17,12 +17,12 @@ class Decisions(LoginRequiredMixin, ListView):
     template_name = 'votes/decision/list.html'
 
     def get_queryset(self):
-        dt = timezone.now() - timedelta(minutes=5)
-        decisions = Decision.objects.filter(
-            ~Q(options__votes__user=self.request.user),
-            end__gt=dt,
-        ).order_by('start').all()
-        return decisions
+        return Decision.objects.filter(
+            voters__in=[self.request.user],  # Limit to votes active user is assigned to
+            end__gt=timezone.now() - timedelta(minutes=5),  # Vote is still open
+        ).exclude(
+            options__votes__user=self.request.user,  # Active user already voted
+        ).order_by('start')
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):

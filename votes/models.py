@@ -6,7 +6,8 @@ from django.utils import timezone
 
 class Decision(models.Model):
     subject = models.CharField(max_length=255)
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(User, related_name='decisions', on_delete=models.SET_NULL, null=True)
+    voters = models.ManyToManyField(User, related_name='elections', blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
