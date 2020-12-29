@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -10,6 +11,7 @@ class DecisionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['voters'].required = True
+        self.fields['voters'].queryset = User.objects.order_by('first_name', 'last_name')
         self.fields['voters'].label_from_instance = self.label_from_instance
 
     @staticmethod

@@ -42,19 +42,19 @@ class Decision(models.Model):
         state = self.state()
         if state == 'pending':
             return {
-                'color': "has-text-warning",
+                'color': "warning",
                 'class': "fas fa-clock",
             }
 
         if state == 'open':
             return {
-                'color': "has-text-success",
+                'color': "success",
                 'class': "fas fa-vote-yea",
             }
 
         if state == 'closed':
             return {
-                'color': "has-text-danger",
+                'color': "danger",
                 'class': "fas fa-lock",
             }
 

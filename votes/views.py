@@ -1,4 +1,3 @@
-from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -10,19 +9,6 @@ from django.views.generic.edit import FormView
 
 from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
-
-
-class Decisions(LoginRequiredMixin, ListView):
-    model = Decision
-    template_name = 'votes/decision/list.html'
-
-    def get_queryset(self):
-        return Decision.objects.filter(
-            voters__in=[self.request.user],  # Limit to votes active user is assigned to
-            end__gt=timezone.now() - timedelta(minutes=5),  # Vote is still open
-        ).exclude(
-            options__votes__user=self.request.user,  # Active user already voted
-        ).order_by('start')
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
@@ -43,6 +29,25 @@ class DecisionInfo(LoginRequiredMixin, DetailView):
     template_name = 'votes/decision/info.html'
     model = Decision
     form_class = VoteForm
+
+
+class Decisions(LoginRequiredMixin, ListView):
+    model = Decision
+    template_name = 'votes/decision/list.html'
+
+    def get_queryset(self):
+        return Decision.objects.filter(
+            Q(voters__in=[self.request.user]),
+            end__gt=timezone.now(),
+        ).order_by('start')
+
+
+class DecisionsOwned(LoginRequiredMixin, ListView):
+    model = Decision
+    template_name = 'votes/decision/owned.html'
+
+    def get_queryset(self):
+        return Decision.objects.filter(author=self.request.user)
 
 
 class DecisionResults(LoginRequiredMixin, ListView):

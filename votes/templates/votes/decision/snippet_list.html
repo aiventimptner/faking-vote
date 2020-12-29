@@ -3,20 +3,12 @@
         {{ title }}
     </p>
     {% for decision in object_list %}
-        <a href="{{ decision.link }}" class="panel-block">
-            <span class="panel-icon {{ decision.icon.color }}">
+        <a href="{% url 'votes:info' decision.id %}" class="panel-block">
+            <span class="panel-icon has-text-{{ decision.icon.color|default:'gray' }}">
                 <i class="{{ decision.icon.class }}" aria-hidden="true"></i>
             </span>
 
-            <p class="mr-3">{{ decision.subject }}</p>
-
-            <p class="has-text-grey">
-                {% if decision.state == 'pending' %}
-                    {{ decision.start }}
-                {% else %}
-                    {{ decision.end }}
-                {% endif %}
-            </p>
+            <p>{{ decision.subject }}</p>
         </a>
     {% empty %}
         <p class="panel-block" disabled>Aktuell sind keine Abstimmungen verfügbar.</p>
