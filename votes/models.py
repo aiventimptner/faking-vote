@@ -20,45 +20,35 @@ class Decision(models.Model):
         moment = timezone.now()
 
         if moment < self.start:
-            return 'pending'
+            # voting not started
+            return {
+                'code': "pending",
+                'color': "warning",
+                'icon': "fas fa-clock",
+                'message': "Die Abstimmung ist noch nicht gestartet. "
+                           f"Sie beginnt am {self.start.strftime('%d.%m.%Y')} "
+                           f"um {self.start.strftime('%H:%M')} Uhr.",
+            }
 
         if self.start <= moment < self.end:
-            return 'open'
-
-        return 'closed'
-
-    def link(self):
-        state = self.state()
-        if state == 'open':
-            return reverse('votes:vote', kwargs={'pk': self.id})
-
-        if state == 'closed':
-            return reverse('votes:result', kwargs={'pk': self.id})
-
-        else:
-            return reverse('votes:info', kwargs={'pk': self.id})
-
-    def icon(self):
-        state = self.state()
-        if state == 'pending':
+            # voting possible
             return {
-                'color': "warning",
-                'class': "fas fa-clock",
-            }
-
-        if state == 'open':
-            return {
+                'code': "open",
                 'color': "success",
-                'class': "fas fa-vote-yea",
+                'icon': "fas fa-vote-yea",
+                'message': "Die Abstimmung läuft aktuell! Stimme jetzt ab. "
+                           f"Du hast bis zum {self.end.strftime('%d.%m.%Y')} "
+                           f"um {self.end.strftime('%H:%M')} Uhr die Möglichkeit "
+                           "deine Stimme abzugeben.",
             }
 
-        if state == 'closed':
-            return {
-                'color': "danger",
-                'class': "fas fa-lock",
-            }
-
-        return "fas fa-box-ballot"
+        # voting closed
+        return {
+            'code': "closed",
+            'color': "danger",
+            'icon': "fas fa-lock",
+            'message': "Die Abstimmung ist bereits beendet."
+        }
 
 
 class Option(models.Model):

@@ -1,0 +1,5 @@
+{% extends 'votes/base_decision.html' %}
+
+{% block column %}
+    {% include 'votes/snippet_detail.html' with show_votes=True %}
+{% endblock %}

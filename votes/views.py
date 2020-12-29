@@ -12,7 +12,7 @@ from .models import Decision, Option, Vote
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
-    template_name = 'votes/decision/create.html'
+    template_name = 'votes/create.html'
     form_class = DecisionForm
     success_url = reverse_lazy('votes:decisions')
 
@@ -26,14 +26,14 @@ class DecisionCreate(LoginRequiredMixin, FormView):
 
 
 class DecisionInfo(LoginRequiredMixin, DetailView):
-    template_name = 'votes/decision/info.html'
+    template_name = 'votes/info.html'
     model = Decision
     form_class = VoteForm
 
 
 class Decisions(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/decision/list.html'
+    template_name = 'votes/pending.html'
 
     def get_queryset(self):
         return Decision.objects.filter(
@@ -44,7 +44,7 @@ class Decisions(LoginRequiredMixin, ListView):
 
 class DecisionsOwned(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/decision/owned.html'
+    template_name = 'votes/owned.html'
 
     def get_queryset(self):
         return Decision.objects.filter(author=self.request.user)
@@ -52,14 +52,14 @@ class DecisionsOwned(LoginRequiredMixin, ListView):
 
 class DecisionResults(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/decision/results.html'
+    template_name = 'votes/results.html'
 
     def get_queryset(self):
         return Decision.objects.filter(end__lt=timezone.now()).order_by('-end').all()
 
 
 class DecisionResult(LoginRequiredMixin, DetailView):
-    template_name = 'votes/decision/result.html'
+    template_name = 'votes/result.html'
     model = Decision
 
     def get(self, request, *args, **kwargs):
@@ -70,7 +70,7 @@ class DecisionResult(LoginRequiredMixin, DetailView):
 
 
 class VoteCreate(LoginRequiredMixin, FormView):
-    template_name = 'votes/vote/create.html'
+    template_name = 'votes/vote.html'
     form_class = VoteForm
     success_url = reverse_lazy('votes:decisions')
 

@@ -1,14 +1,22 @@
-{% extends 'votes/decision/base_decision.html' %}
+{% extends 'votes/base_decision.html' %}
 
 {% block column %}
     <div class="box">
         <h1 class="title is-4">Stimme abgeben</h1>
+        <p class="subtitle">{{ decision.subject }}</p>
+
+        <div class="block">
+            <div class="notification is-{{ decision.state.color }}">
+                <button class="delete"></button>
+                {{ decision.state.message }}
+        </div>
 
         {% if entitled_to_vote %}
-            <p class="subtitle">{{ decision.subject }}</p>
 
             <form method="post">
                 {% csrf_token %}
+
+                <fieldset {% if decision.state.code != 'open' %}disabled{% endif %}>
 
                 <div class="field">
                     {% for radio in form.option %}
@@ -30,6 +38,8 @@
                 {% for error in form.non_field_errors %}
                     <p class="help is-danger">{{ error }}</p>
                 {% endfor %}
+
+                </fieldset>
             </form>
             </div>
         {% else %}

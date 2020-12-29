@@ -4,8 +4,8 @@
     </p>
     {% for decision in object_list %}
         <a href="{% url 'votes:info' decision.id %}" class="panel-block">
-            <span class="panel-icon has-text-{{ decision.icon.color|default:'gray' }}">
-                <i class="{{ decision.icon.class }}" aria-hidden="true"></i>
+            <span class="panel-icon has-text-{{ decision.state.color }}">
+                <i class="{{ decision.state.icon }}" aria-hidden="true"></i>
             </span>
 
             <p>{{ decision.subject }}</p>
