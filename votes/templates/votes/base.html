@@ -9,9 +9,11 @@
         <link rel="stylesheet" href="{% static 'votes/css/bulma.min.css' %}">
         <link rel="stylesheet" href="{% static 'votes/css/style.css' %}">
 
-        <script src="{% static 'votes/js/font-awesome.js' %}"></script>
-        <script src="{% static 'votes/js/navbar-burger.js' %}"></script>
-        <script src="{% static 'votes/js/close-notification.js' %}"></script>
+        {% block scripts %}
+            <script src="{% static 'votes/js/font-awesome.js' %}"></script>
+            <script src="{% static 'votes/js/navbar-burger.js' %}"></script>
+            <script src="{% static 'votes/js/close-notification.js' %}"></script>
+        {% endblock %}
     </head>
 
     <body>

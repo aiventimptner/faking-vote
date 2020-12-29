@@ -1,5 +1,13 @@
 {% extends 'votes/decision/base_decision.html' %}
 
+{% load static %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'votes/js/luxon.min.js' %}"></script>
+    <script src="{% static 'votes/js/datetime-buttons.js' %}"></script>
+{% endblock %}
+
 {% block column %}
     <div class="box">
         <h1 class="title is-4">Neue Abstimmung</h1>
@@ -18,9 +26,9 @@
 
             <div class="field">
                 <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
-                <div class="control">
-                    {{ form.start }}
-                </div>
+
+                {% include 'votes/decision/snippet_datetime_input.html' with field=form.start %}
+
                 {% for error in form.start.errors %}
                     <p class="help is-danger">{{ error }}</p>
                 {% endfor %}
@@ -28,20 +36,23 @@
 
             <div class="field">
                 <label class="label" for="{{ form.end.id_for_label }}">{{ form.end.label }}</label>
-                <div class="control">
-                    {{ form.end }}
-                </div>
+
+                {% include 'votes/decision/snippet_datetime_input.html' with field=form.end %}
+
                 {% for error in form.end.errors %}
                     <p class="help is-danger">{{ error }}</p>
                 {% endfor %}
             </div>
 
-            <button type="submit" class="button is-primary">Erstellen</button>
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Erstellen</button>
+                </div>
 
-            {% for error in form.non_field_errors %}
-                <p class="help is-danger">{{ error }}</p>
-            {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
         </form>
-        </div>
     </div>
 {% endblock %}
