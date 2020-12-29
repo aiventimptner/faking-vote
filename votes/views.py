@@ -11,13 +11,16 @@ from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
 
 
-class DecisionList(LoginRequiredMixin, ListView):
+class Decisions(LoginRequiredMixin, ListView):
     model = Decision
     template_name = 'votes/decision/list.html'
 
     def get_queryset(self):
         dt = timezone.now() - timedelta(minutes=5)
-        decisions = Decision.objects.filter(~Q(options__votes__user=self.request.user), end__gt=dt).order_by('start').all()
+        decisions = Decision.objects.filter(
+            ~Q(options__votes__user=self.request.user),
+            end__gt=dt,
+        ).order_by('start').all()
         return decisions
 
 
