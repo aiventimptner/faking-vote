@@ -3,7 +3,6 @@
 {% block column %}
     <div class="box">
         <h1 class="title is-4">Stimme abgeben</h1>
-        <p class="subtitle">{{ decision.subject }}</p>
 
         <div class="block">
             <div class="notification is-{{ decision.state.color }}">
@@ -18,11 +17,22 @@
             </div>
         </div>
 
+        {% if user_has_voted and decision.state.code != 'closed' %}
+            <div class="block">
+                <div class="notification is-warning">
+                    <button class="delete"></button>
+                    Du hast bereits abgestimmt!
+                </div>
+            </div>
+        {% endif %}
+
+        <p><strong>{{ decision.subject }}</strong></p>
+
         {% if entitled_to_vote %}
             <form method="post">
                 {% csrf_token %}
 
-                <fieldset {% if decision.state.code != 'open' %}disabled{% endif %}>
+                <fieldset {% if user_has_voted or decision.state.code != 'open' %}disabled{% endif %}>
 
                 <div class="field">
                     {% for radio in form.option %}

@@ -47,7 +47,7 @@ class DecisionsOwned(LoginRequiredMixin, ListView):
     template_name = 'votes/owned.html'
 
     def get_queryset(self):
-        return Decision.objects.filter(author=self.request.user)
+        return Decision.objects.filter(author=self.request.user).order_by('-end')
 
 
 class DecisionResults(LoginRequiredMixin, ListView):
@@ -55,7 +55,7 @@ class DecisionResults(LoginRequiredMixin, ListView):
     template_name = 'votes/results.html'
 
     def get_queryset(self):
-        return Decision.objects.filter(end__lt=timezone.now()).order_by('-end').all()
+        return Decision.objects.filter(end__lt=timezone.now()).order_by('-end')
 
 
 class DecisionResult(LoginRequiredMixin, DetailView):
@@ -76,9 +76,12 @@ class VoteCreate(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
+        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
+
         context = super().get_context_data()
         context['decision'] = decision
         context['entitled_to_vote'] = self.request.user in decision.voters.all()
+        context['user_has_voted'] = len(votes) > 0
         return context
 
     def get_form_kwargs(self):
@@ -97,12 +100,9 @@ class VoteCreate(LoginRequiredMixin, FormView):
             # voting not allowed
             raise PermissionDenied()
 
-        votes = Vote.objects.filter(
-            user=self.request.user,
-            option__in=[option.id for option in decision.options.all()],
-        ).all()
+        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
 
-        if votes:
+        if len(votes) > 0:
             # user already voted
             raise PermissionDenied()
 
