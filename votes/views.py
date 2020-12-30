@@ -7,7 +7,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
 from .forms import DecisionForm, VoteForm
-from .models import Decision, Option, Vote
+from .models import Decision, Option
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
@@ -81,11 +81,6 @@ class Results(LoginRequiredMixin, ListView):
 class ResultInfo(LoginRequiredMixin, DetailView):
     template_name = 'votes/info.html'
     model = Decision
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['show_results'] = True
-        return context
 
     def get(self, request, *args, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])

@@ -53,8 +53,9 @@
             </div>
         </div>
 
+        {% with path=request.resolver_match.url_name %}
         <p class="heading is-size-6 has-text-centered">
-            {% if show_results %}
+            {% if path == 'result' %}
                 Ergebnis
             {% else %}
                 Wählbare Optionen
@@ -67,14 +68,14 @@
                         <tr>
                             <th>{{ forloop.counter }}</th>
                             <td>{{ option.text }}</td>
-                            {% if show_results %}<td>{{ option.votes.count }} Stimme(n)</td>{% endif %}
+                            {% if path == 'result' %}<td>{{ option.votes.count }} Stimme(n)</td>{% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        {% if not show_results %}
+        {% if path != 'result' %}
             <div class="block">
                 {% if decision.state.code == 'closed' %}
                     <a class="button is-info is-fullwidth" href="{% url 'votes:result' decision.id %}">Zum Ergebnis</a>
@@ -83,5 +84,6 @@
                 {% endif %}
             </div>
         {% endif %}
+        {% endwith %}
     </div>
 {% endblock %}
