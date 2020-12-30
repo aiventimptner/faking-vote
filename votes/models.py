@@ -69,3 +69,6 @@ class Team(models.Model):
     slug = models.SlugField()
     members = models.ManyToManyField(User, related_name='teams')
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name

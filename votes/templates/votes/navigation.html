@@ -23,9 +23,30 @@
         </div>
         <div class="navbar-end">
             <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">{{ request.user.get_full_name }}</a>
+                <a class="navbar-link">Mitgliedschaften</a>
 
-                <div class="navbar-dropdown">
+                <div class="navbar-dropdown is-right">
+                    {% for team in request.user.teams.all %}
+                        <div class="navbar-item">{{ team }}</div>
+                    {% empty %}
+                        <div class="navbar-item">Kein Mitglied eines Teams</div>
+                    {% endfor %}
+
+                    <hr class="navbar-divider">
+
+                    <a class="navbar-item" href="#"><del>Team beitreten</del></a>
+                </div>
+            </div>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">{{ request.user|title }}</a>
+
+                <div class="navbar-dropdown is-right">
+                    <div class="navbar-item">{{ request.user.get_full_name }}</div>
+                    <div class="navbar-item">{{ request.user.email }}</div>
+
+                    <hr class="navbar-divider">
+
                     <a class="navbar-item" href="{% url 'password_change' %}">Passwort ändern</a>
                     <a class="navbar-item" href="{% url 'logout' %}">Logout</a>
                 </div>

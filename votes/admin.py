@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Decision, Option, Vote
+from .models import Decision, Option, Vote, Team
 
 
 @admin.register(Decision)
@@ -15,4 +15,9 @@ class OptionAdmin(admin.ModelAdmin):
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Team)
+class TeamAdmin(admin.ModelAdmin):
     pass
