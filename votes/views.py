@@ -101,12 +101,11 @@ class VoteCreate(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
 
         context = super().get_context_data(**kwargs)
         context['decision'] = decision
         context['entitled_to_vote'] = self.request.user in decision.voters.all()
-        context['user_has_voted'] = len(votes) > 0
+        context['user_has_voted'] = self.request.user not in decision.pending_voters()
         return context
 
     def get_form_kwargs(self):
@@ -117,17 +116,15 @@ class VoteCreate(LoginRequiredMixin, FormView):
     def post(self, request, *args, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
 
-        if self.request.user not in decision.voters.all():
-            # user not entitled to vote
-            raise PermissionDenied()
-
         if decision.state()['code'] != 'open':
             # voting not allowed
             raise PermissionDenied()
 
-        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
+        if self.request.user not in decision.voters.all():
+            # user not entitled to vote
+            raise PermissionDenied()
 
-        if len(votes) > 0:
+        if self.request.user not in decision.pending_voters():
             # user already voted
             raise PermissionDenied()
 

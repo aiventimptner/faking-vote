@@ -15,10 +15,27 @@ class Decision(models.Model):
     def __str__(self):
         return f"{self.subject}"
 
-    def state(self):
-        moment = timezone.now()
+    def pending_voters(self):
+        voters = []
+        for user in self.voters.all():
+            votes = Vote.objects.filter(user=user, option__in=self.options.all())
+            if not votes.count():
+                voters.append(user)
 
-        if moment < self.start:
+        return voters
+
+    def state(self):
+        now = timezone.now()
+
+        if not self.pending_voters():
+            # all voters have voted
+            return {
+                'code': "closed",
+                'color': "danger",
+                'icon': "fas fa-lock",
+            }
+
+        if now < self.start:
             # voting not started
             return {
                 'code': "pending",
@@ -26,7 +43,7 @@ class Decision(models.Model):
                 'icon': "fas fa-clock",
             }
 
-        if self.start <= moment < self.end:
+        if self.start <= now < self.end:
             # voting possible
             return {
                 'code': "open",
