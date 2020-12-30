@@ -65,7 +65,7 @@ class DecisionForm(forms.ModelForm):
                 'rows': 2,
             }),
             'voters': forms.SelectMultiple(attrs={
-                'size': 8,
+                'size': 6,
             }),
             'start': forms.DateTimeInput(attrs={
                 'class': "input",

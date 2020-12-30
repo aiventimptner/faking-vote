@@ -1,30 +1,29 @@
 {% extends 'votes/base_decision.html' %}
 
 {% block column %}
+    <div class="notification is-{{ decision.state.color }}">
+        <button class="delete"></button>
+        {% if decision.state.code == 'pending' %}
+            Die Abstimmung beginnt erst in einiger Zeit.
+            Du musst dich noch bis {{ decision.start }} gedulden.
+        {% elif decision.state.code == 'open' %}
+            Die Abstimmung hat begonnen.
+            Du hast bis {{ decision.end }} die Möglichkeit deine Stimme abzugeben.
+        {% else %}
+            Die Abstimmung ist bereits zu Ende.
+            Du kannst dir das Ergebnis <a href="{% url 'votes:result' decision.id %}">hier</a> einsehen.
+        {% endif %}
+    </div>
+
+    {% if user_has_voted and decision.state.code != 'closed' %}
+        <div class="notification is-warning">
+            <button class="delete"></button>
+            Du hast bereits abgestimmt!
+        </div>
+    {% endif %}
+
     <div class="box">
         <h1 class="title is-4">Stimme abgeben</h1>
-
-        <div class="block">
-            <div class="notification is-{{ decision.state.color }}">
-                <button class="delete"></button>
-                {% if decision.state.code == 'pending' %}
-                    Die Abstimmung beginnt erst in einiger Zeit. Du musst dich noch bis {{ decision.start }} gedulden.
-                {% elif decision.state.code == 'open' %}
-                    Die Abstimmung läuft aktuell. Du hast bis {{ decision.end }} die Möglichkeit deine Stimme abzugeben.
-                {% else %}
-                    Die Abstimmung ist bereits zu Ende.
-                {% endif %}
-            </div>
-        </div>
-
-        {% if user_has_voted and decision.state.code != 'closed' %}
-            <div class="block">
-                <div class="notification is-warning">
-                    <button class="delete"></button>
-                    Du hast bereits abgestimmt!
-                </div>
-            </div>
-        {% endif %}
 
         <p><strong>{{ decision.subject }}</strong></p>
 

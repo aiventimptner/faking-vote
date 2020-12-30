@@ -9,6 +9,11 @@
 {% endblock %}
 
 {% block column %}
+    <div class="notification">
+        <button class="delete"></button>
+        Abstimmungen und deren Ergebnisse sind für alle Mitglieder der Organe der Studierendenschaft einsehbar.
+    </div>
+
     <div class="box">
         <h1 class="title is-4">Neue Abstimmung</h1>
         <form method="post">
@@ -47,20 +52,18 @@
                     </div>
                 </div>
 
-                <div class="column is-one-third">
+                <div class="column is-two-fifths">
                     <div class="field">
                         <label class="label" for="{{ form.voters.id_for_label }}">{{ form.voters.label }}</label>
 
-                        <div class="select is-multiple">
+                        <div class="select is-multiple is-fullwidth">
                             {{ form.voters }}
                         </div>
 
                         <p class="help">
+                            Es können nur die Mitglieder des eigenen Organs ausgewählt werden.<br>
                             Benutze <code>shift</code> zum Markieren von mehreren Personen.
-                        </p>
-
-                        <p class="help">
-                            Benutze <code>cmd</code> bzw. <code>strg</code> zum Auswählen von mehreren Personen.
+                            Mittels <code>cmd</code> bzw. <code>strg</code> kannst du Personen einzeln markieren.
                         </p>
 
                         {% for error in form.voters.errors %}
