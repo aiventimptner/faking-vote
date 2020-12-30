@@ -62,3 +62,10 @@ class Vote(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'option'], name='unique_vote'),
         ]
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=150)
+    slug = models.SlugField()
+    members = models.ManyToManyField(User, related_name='teams')
+    created = models.DateTimeField(auto_now_add=True)
