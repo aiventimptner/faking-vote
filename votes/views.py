@@ -32,7 +32,7 @@ class DecisionInfo(LoginRequiredMixin, DetailView):
 
 class Decisions(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/pending.html'
+    template_name = 'votes/list.html'
 
     def get_queryset(self):
         decisions = Decision.objects.filter(
@@ -43,26 +43,44 @@ class Decisions(LoginRequiredMixin, ListView):
         ).order_by('start')
         return decisions
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Offene Abstimmungen"
+        return context
+
 
 class DecisionsOwned(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/owned.html'
+    template_name = 'votes/list.html'
 
     def get_queryset(self):
         return Decision.objects.filter(author=self.request.user).order_by('-end')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Eigene Abstimmungen"
+        return context
 
-class DecisionResults(LoginRequiredMixin, ListView):
+
+class Results(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/results.html'
+    template_name = 'votes/list.html'
+    queryset = Decision.objects.filter(end__lt=timezone.now()).order_by('-end')
 
-    def get_queryset(self):
-        return Decision.objects.filter(end__lt=timezone.now()).order_by('-end')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Abgeschlossene Abstimmungen"
+        return context
 
 
-class DecisionResult(LoginRequiredMixin, DetailView):
-    template_name = 'votes/result.html'
+class ResultInfo(LoginRequiredMixin, DetailView):
+    template_name = 'votes/info.html'
     model = Decision
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_results'] = True
+        return context
 
     def get(self, request, *args, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
@@ -80,7 +98,7 @@ class VoteCreate(LoginRequiredMixin, FormView):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
         votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
 
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
         context['decision'] = decision
         context['entitled_to_vote'] = self.request.user in decision.voters.all()
         context['user_has_voted'] = len(votes) > 0
