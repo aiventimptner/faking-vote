@@ -1,7 +1,5 @@
-from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -12,21 +10,8 @@ from .forms import DecisionForm, VoteForm
 from .models import Decision, Option, Vote
 
 
-class Decisions(LoginRequiredMixin, ListView):
-    model = Decision
-    template_name = 'votes/decision/list.html'
-
-    def get_queryset(self):
-        dt = timezone.now() - timedelta(minutes=5)
-        decisions = Decision.objects.filter(
-            ~Q(options__votes__user=self.request.user),
-            end__gt=dt,
-        ).order_by('start').all()
-        return decisions
-
-
 class DecisionCreate(LoginRequiredMixin, FormView):
-    template_name = 'votes/decision/create.html'
+    template_name = 'votes/create.html'
     form_class = DecisionForm
     success_url = reverse_lazy('votes:decisions')
 
@@ -40,38 +25,83 @@ class DecisionCreate(LoginRequiredMixin, FormView):
 
 
 class DecisionInfo(LoginRequiredMixin, DetailView):
-    template_name = 'votes/decision/info.html'
+    template_name = 'votes/info.html'
     model = Decision
     form_class = VoteForm
 
 
-class DecisionResults(LoginRequiredMixin, ListView):
+class Decisions(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/decision/results.html'
+    template_name = 'votes/list.html'
 
     def get_queryset(self):
-        return Decision.objects.filter(end__lt=timezone.now()).order_by('-end').all()
+        decisions = Decision.objects.filter(
+            voters__in=[self.request.user],
+            end__gt=timezone.now(),
+        ).exclude(
+            options__votes__user=self.request.user,
+        ).order_by('start')
+        return decisions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Offene Abstimmungen"
+        return context
 
 
-class DecisionResult(LoginRequiredMixin, DetailView):
-    template_name = 'votes/decision/result.html'
+class DecisionsOwned(LoginRequiredMixin, ListView):
     model = Decision
+    template_name = 'votes/list.html'
+
+    def get_queryset(self):
+        return Decision.objects.filter(author=self.request.user).order_by('-end')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Eigene Abstimmungen"
+        return context
+
+
+class Results(LoginRequiredMixin, ListView):
+    model = Decision
+    template_name = 'votes/list.html'
+    queryset = Decision.objects.filter(end__lt=timezone.now()).order_by('-end')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Abgeschlossene Abstimmungen"
+        return context
+
+
+class ResultInfo(LoginRequiredMixin, DetailView):
+    template_name = 'votes/info.html'
+    model = Decision
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['show_results'] = True
+        return context
 
     def get(self, request, *args, **kwargs):
         decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-        if decision.state() != 'closed':
+        if decision.state()['code'] != 'closed':
             raise PermissionDenied()
         return super().get(request, *args, **kwargs)
 
 
 class VoteCreate(LoginRequiredMixin, FormView):
-    template_name = 'votes/vote/create.html'
+    template_name = 'votes/vote.html'
     form_class = VoteForm
     success_url = reverse_lazy('votes:decisions')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context['decision'] = get_object_or_404(Decision, pk=self.kwargs['pk'])
+        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
+        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
+
+        context = super().get_context_data(**kwargs)
+        context['decision'] = decision
+        context['entitled_to_vote'] = self.request.user in decision.voters.all()
+        context['user_has_voted'] = len(votes) > 0
         return context
 
     def get_form_kwargs(self):
@@ -79,25 +109,21 @@ class VoteCreate(LoginRequiredMixin, FormView):
         kwargs['decision_id'] = self.kwargs['pk']
         return kwargs
 
-    def get(self, request, *args, **kwargs):
-        decision = get_object_or_404(Decision, pk=self.kwargs['pk'])
-
-        if decision.state() != 'open':
-            raise PermissionDenied()
-
-        return super().get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         decision = Decision.objects.get(pk=self.kwargs['pk'])
-        votes = Vote.objects.filter(
-            user=self.request.user,
-            option__in=[option.id for option in decision.options.all()],
-        ).all()
 
-        if decision.state() != 'open':
+        if self.request.user not in decision.voters.all():
+            # user not entitled to vote
             raise PermissionDenied()
 
-        if votes:
+        if decision.state()['code'] != 'open':
+            # voting not allowed
+            raise PermissionDenied()
+
+        votes = Vote.objects.filter(user=self.request.user, option__in=decision.options.all())
+
+        if len(votes) > 0:
+            # user already voted
             raise PermissionDenied()
 
         return super().post(request, *args, **kwargs)

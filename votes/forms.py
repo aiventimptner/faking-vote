@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -7,6 +8,16 @@ from .models import Decision, Option, Vote
 
 
 class DecisionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['voters'].required = True
+        self.fields['voters'].queryset = User.objects.order_by('first_name', 'last_name')
+        self.fields['voters'].label_from_instance = self.label_from_instance
+
+    @staticmethod
+    def label_from_instance(obj):
+        return obj.get_full_name()
+
     def clean_start(self):
         data = self.cleaned_data['start']
         if data < timezone.now():
@@ -37,9 +48,10 @@ class DecisionForm(forms.ModelForm):
 
     class Meta:
         model = Decision
-        fields = ['subject', 'start', 'end']
+        fields = ['subject', 'voters', 'start', 'end']
         labels = {
             'subject': "Gegenstand",
+            'voters': "Stimmberechtigt",
             'start': "Beginn",
             'end': "Ende",
         }
@@ -48,6 +60,9 @@ class DecisionForm(forms.ModelForm):
                 'class': "textarea has-fixed-size",
                 'placeholder': "Es sind maximal 255 Zeichen erlaubt.",
                 'rows': 2,
+            }),
+            'voters': forms.SelectMultiple(attrs={
+                'size': 8,
             }),
             'start': forms.DateTimeInput(attrs={
                 'class': "input",

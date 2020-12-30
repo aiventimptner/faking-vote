@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.utils import timezone
 
 
 class Decision(models.Model):
     subject = models.CharField(max_length=255)
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(User, related_name='decisions', on_delete=models.SET_NULL, null=True)
+    voters = models.ManyToManyField(User, related_name='elections', blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
@@ -19,45 +19,27 @@ class Decision(models.Model):
         moment = timezone.now()
 
         if moment < self.start:
-            return 'pending'
+            # voting not started
+            return {
+                'code': "pending",
+                'color': "warning",
+                'icon': "fas fa-clock",
+            }
 
         if self.start <= moment < self.end:
-            return 'open'
-
-        return 'closed'
-
-    def link(self):
-        state = self.state()
-        if state == 'open':
-            return reverse('votes:vote', kwargs={'pk': self.id})
-
-        if state == 'closed':
-            return reverse('votes:result', kwargs={'pk': self.id})
-
-        else:
-            return reverse('votes:info', kwargs={'pk': self.id})
-
-    def icon(self):
-        state = self.state()
-        if state == 'pending':
+            # voting possible
             return {
-                'color': "has-text-warning",
-                'class': "fas fa-clock",
+                'code': "open",
+                'color': "success",
+                'icon': "fas fa-vote-yea",
             }
 
-        if state == 'open':
-            return {
-                'color': "has-text-success",
-                'class': "fas fa-vote-yea",
-            }
-
-        if state == 'closed':
-            return {
-                'color': "has-text-danger",
-                'class': "fas fa-lock",
-            }
-
-        return "fas fa-box-ballot"
+        # voting closed
+        return {
+            'code': "closed",
+            'color': "danger",
+            'icon': "fas fa-lock",
+        }
 
 
 class Option(models.Model):
