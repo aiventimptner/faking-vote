@@ -8,6 +8,7 @@
             <span aria-hidden="true"></span>
         </a>
     </div>
+
     <div id="navbarMain" class="navbar-menu">
         <div class="navbar-start">
             <a class="navbar-item" href="{% url 'votes:decisions' %}">Stimme abgeben</a>
@@ -15,21 +16,23 @@
 
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">Verwaltung</a>
+
                 <div class="navbar-dropdown">
                     <a class="navbar-item" href="{% url 'votes:create' %}">Neue Abstimmung erstellen</a>
                     <a class="navbar-item" href="{% url 'votes:owned' %}">Eigene Abstimmungen anzeigen</a>
                 </div>
             </div>
         </div>
+
         <div class="navbar-end">
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">Mitgliedschaften</a>
 
                 <div class="navbar-dropdown is-right">
                     {% for team in request.user.teams.all %}
-                        <div class="navbar-item">{{ team }}</div>
+                    <div class="navbar-item">{{ team }}</div>
                     {% empty %}
-                        <div class="navbar-item">Kein Mitglied eines Teams</div>
+                    <div class="navbar-item">Kein Mitglied eines Teams</div>
                     {% endfor %}
 
                     <hr class="navbar-divider">

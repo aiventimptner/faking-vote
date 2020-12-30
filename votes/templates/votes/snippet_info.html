@@ -3,7 +3,7 @@
     <h2 class="subtitle">{{ subtitle }}</h2>
 
     {% if description %}
-        <p class="mb-5">{{ description }}</p>
+    <p class="mb-5">{{ description }}</p>
     {% endif %}
 
     <a href="{% url 'votes:decisions' %}" class="button is-{{ color|default:'primary' }}">Zur Startseite</a>

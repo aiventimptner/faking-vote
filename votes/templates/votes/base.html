@@ -10,19 +10,19 @@
         <link rel="stylesheet" href="{% static 'votes/css/style.css' %}">
 
         {% block scripts %}
-            <script src="{% static 'votes/js/font-awesome.js' %}"></script>
-            <script src="{% static 'votes/js/navbar-burger.js' %}"></script>
-            <script src="{% static 'votes/js/close-notification.js' %}"></script>
+        <script src="{% static 'votes/js/font-awesome.js' %}"></script>
+        <script src="{% static 'votes/js/navbar-burger.js' %}"></script>
+        <script src="{% static 'votes/js/close-notification.js' %}"></script>
         {% endblock %}
     </head>
 
     <body>
         {% block body %}
-            {% include 'votes/navigation.html' %}
+        {% include 'votes/navigation.html' %}
 
-            <section class="section">
-                {% block content %}{% endblock %}
-            </section>
+        <section class="section">
+            {% block content %}{% endblock %}
+        </section>
         {% endblock %}
     </body>
 </html>
