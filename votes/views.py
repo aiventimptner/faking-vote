@@ -15,6 +15,11 @@ class DecisionCreate(LoginRequiredMixin, FormView):
     form_class = DecisionForm
     success_url = reverse_lazy('votes:decisions')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         form.save()

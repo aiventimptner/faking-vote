@@ -9,9 +9,12 @@ from .models import Decision, Option, Vote
 
 class DecisionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.fields['voters'].required = True
-        self.fields['voters'].queryset = User.objects.order_by('first_name', 'last_name')
+        self.fields['voters'].queryset = User.objects.filter(
+            teams__in=self.user.teams.all(),
+        ).distinct().order_by('first_name', 'last_name')
         self.fields['voters'].label_from_instance = self.label_from_instance
 
     @staticmethod
