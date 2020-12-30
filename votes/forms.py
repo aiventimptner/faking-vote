@@ -80,9 +80,9 @@ class DecisionForm(forms.ModelForm):
 
 class VoteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        self.decision_id = kwargs.pop('decision_id')
+        self.decision = kwargs.pop('decision')
         super().__init__(*args, **kwargs)
-        self.fields['option'].queryset = Option.objects.filter(decision__id=self.decision_id).all()
+        self.fields['option'].queryset = Option.objects.filter(decision=self.decision)
 
     class Meta:
         model = Vote

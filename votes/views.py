@@ -111,7 +111,7 @@ class VoteCreate(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['decision_id'] = self.kwargs['pk']
+        kwargs['decision'] = Decision.objects.get(pk=self.kwargs['pk'])
         return kwargs
 
     def post(self, request, *args, **kwargs):
