@@ -26,6 +26,15 @@
 
         <div class="navbar-end">
             <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">Einladungen</a>
+
+                <div class="navbar-dropdown is-right">
+                    <a class="navbar-item" href="{% url 'votes:invite' %}">Neu erstellen</a>
+                    <a class="navbar-item" href="{% url 'votes:invitations' %}">Alle anzeigen</a>
+                </div>
+            </div>
+
+            <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">Mitgliedschaften</a>
 
                 <div class="navbar-dropdown is-right">

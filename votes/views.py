@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
@@ -6,8 +8,8 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
-from .forms import DecisionForm, VoteForm
-from .models import Decision, Option
+from .forms import DecisionForm, VoteForm, InvitationForm
+from .models import Decision, Option, Invitation, Team
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
@@ -127,5 +129,32 @@ class VoteCreate(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+
+class Invitations(LoginRequiredMixin, ListView):
+    model = Invitation
+    template_name = 'votes/invitations.html'
+
+    def get_queryset(self):
+        return Invitation.objects.exclude(
+            teams__in=Team.objects.exclude(members__exact=self.request.user),
+        ).order_by('-created')
+
+
+class InvitationCreate(LoginRequiredMixin, FormView):
+    template_name = 'votes/invite.html'
+    form_class = InvitationForm
+    success_url = reverse_lazy('votes:invitations')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.token = secrets.token_urlsafe(16)
+        form.instance.creator = self.request.user
         form.save()
         return super().form_valid(form)

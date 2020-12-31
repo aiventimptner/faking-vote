@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .models import Decision, Option, Vote
+from .models import Decision, Option, Vote, Invitation, Team
 
 
 class DecisionForm(forms.ModelForm):
@@ -91,4 +91,32 @@ class VoteForm(forms.ModelForm):
             'option': forms.RadioSelect(attrs={
                 'class': "radio",
             }),
+        }
+
+
+class InvitationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['teams'].queryset = Team.objects.filter(members__in=[self.user])
+
+    def clean_expiry(self):
+        data = self.cleaned_data['expiry']
+        diff = data - timezone.now()
+        value = round(diff.total_seconds() / 3600)
+        if value not in [8, 24, 168]:
+            raise ValidationError("Es können nur die vorgegebenen Fristen verwendet werden.", code='invalid')
+
+        return data
+
+    class Meta:
+        model = Invitation
+        fields = ['teams', 'expiry']
+        labels = {
+            'teams': "Organ(e)",
+            'expiry': "Gültigkeit",
+        }
+        widgets = {
+            'teams': forms.CheckboxSelectMultiple(),
+            'expiry': forms.HiddenInput(),
         }

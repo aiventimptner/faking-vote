@@ -89,3 +89,11 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Invitation(models.Model):
+    token = models.SlugField(unique=True)
+    teams = models.ManyToManyField(Team, related_name='invitations')
+    expiry = models.DateTimeField()
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
