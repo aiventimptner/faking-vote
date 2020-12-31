@@ -11,6 +11,7 @@ urlpatterns = [
     path('join/', views.JoinTeam.as_view(), name='join'),
     path('owned/', views.DecisionsOwned.as_view(), name='owned'),
     path('results/', views.Results.as_view(), name='results'),
+    path('teams/', views.Teams.as_view(), name='teams'),
     path('<int:pk>/', views.DecisionInfo.as_view(), name='info'),
     path('<int:pk>/result/', views.ResultInfo.as_view(), name='result'),
     path('<int:pk>/vote/', views.VoteCreate.as_view(), name='vote'),

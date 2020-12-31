@@ -160,6 +160,11 @@ class InvitationCreate(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
+class Teams(LoginRequiredMixin, ListView):
+    model = Team
+    template_name = 'votes/teams.html'
+
+
 class JoinTeam(LoginRequiredMixin, FormView):
     template_name = 'votes/join.html'
     form_class = JoinTeamForm
