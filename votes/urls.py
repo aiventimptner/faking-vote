@@ -8,6 +8,7 @@ urlpatterns = [
     path('create/', views.DecisionCreate.as_view(), name='create'),
     path('invitations/', views.Invitations.as_view(), name='invitations'),
     path('invitations/create/', views.InvitationCreate.as_view(), name='invite'),
+    path('join/', views.JoinTeam.as_view(), name='join'),
     path('owned/', views.DecisionsOwned.as_view(), name='owned'),
     path('results/', views.Results.as_view(), name='results'),
     path('<int:pk>/', views.DecisionInfo.as_view(), name='info'),

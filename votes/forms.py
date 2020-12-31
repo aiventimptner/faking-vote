@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django import forms
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils import timezone
 
 from .models import Decision, Option, Vote, Invitation, Team
@@ -120,3 +120,26 @@ class InvitationForm(forms.ModelForm):
             'teams': forms.CheckboxSelectMultiple(),
             'expiry': forms.HiddenInput(),
         }
+
+
+class JoinTeamForm(forms.Form):
+    token = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': "input",
+            'autofocus': "",
+        }),
+        required=True,
+    )
+
+    def clean_token(self):
+        data = self.cleaned_data['token']
+
+        try:
+            invitation = Invitation.objects.get(token=data)
+        except ObjectDoesNotExist:
+            raise ValidationError("Der Token ist ungültig.", code='invalid')
+
+        if timezone.now() > invitation.expiry:
+            raise ValidationError("Der Token ist abgelaufen.", code='invalid')
+
+        return data

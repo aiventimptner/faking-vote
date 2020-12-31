@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
-from .forms import DecisionForm, VoteForm, InvitationForm
+from .forms import DecisionForm, VoteForm, InvitationForm, JoinTeamForm
 from .models import Decision, Option, Invitation, Team
 
 
@@ -157,4 +157,20 @@ class InvitationCreate(LoginRequiredMixin, FormView):
         form.instance.token = secrets.token_urlsafe(16)
         form.instance.creator = self.request.user
         form.save()
+        return super().form_valid(form)
+
+
+class JoinTeam(LoginRequiredMixin, FormView):
+    template_name = 'votes/join.html'
+    form_class = JoinTeamForm
+    success_url = reverse_lazy('votes:invitations')
+
+    def form_valid(self, form):
+        token = form.cleaned_data['token']
+        invitation = Invitation.objects.get(token=token)
+
+        user = self.request.user
+        user.teams.add(*invitation.teams.all())
+        user.save()
+
         return super().form_valid(form)
