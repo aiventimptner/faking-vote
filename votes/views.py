@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import FormView
 
 from .forms import DecisionForm, VoteForm, InvitationForm, JoinTeamForm
-from .models import Decision, Option, Invitation, Team
+from .models import Decision, Option, Invitation, Team, Membership
 
 
 class DecisionCreate(LoginRequiredMixin, FormView):
@@ -166,11 +166,13 @@ class JoinTeam(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('votes:invitations')
 
     def form_valid(self, form):
-        token = form.cleaned_data['token']
-        invitation = Invitation.objects.get(token=token)
-
-        user = self.request.user
-        user.teams.add(*invitation.teams.all())
-        user.save()
+        invitation = Invitation.objects.get(token=form.cleaned_data['token'])
+        for team in invitation.teams.all():
+            membership = Membership(
+                team=team,
+                user=self.request.user,
+                invitation=invitation,
+            )
+            membership.save()
 
         return super().form_valid(form)

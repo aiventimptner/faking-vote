@@ -84,7 +84,7 @@ class Vote(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=150)
     slug = models.SlugField()
-    members = models.ManyToManyField(User, related_name='teams')
+    members = models.ManyToManyField(User, related_name='teams', through='Membership')
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
