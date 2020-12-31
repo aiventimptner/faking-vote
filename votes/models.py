@@ -3,6 +3,15 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+def get_all_friends(self: User):
+    teams_pk = self.teams.values_list('pk', flat=True)
+    members_pk = Team.objects.filter(pk__in=teams_pk).values_list('members', flat=True).distinct()
+    return User.objects.filter(pk__in=members_pk)
+
+
+User.add_to_class("friends", get_all_friends)
+
+
 class Decision(models.Model):
     subject = models.CharField(max_length=255)
     author = models.ForeignKey(User, related_name='decisions', on_delete=models.SET_NULL, null=True)

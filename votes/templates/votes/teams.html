@@ -23,7 +23,7 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ membership.user.get_full_name }}</td>
-                {% if team in request.user.teams.all %}
+                {% if request.user in membership.user.friends %}
                     <td>{{ membership.user.email }}</td>
                 {% else %}
                 <td class="has-text-grey">
