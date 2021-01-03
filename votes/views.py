@@ -1,14 +1,16 @@
 import secrets
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView
+from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic.edit import FormView, CreateView
+from secrets import token_urlsafe
 
-from .forms import DecisionForm, VoteForm, InvitationForm, JoinTeamForm
+from .forms import DecisionForm, VoteForm, InvitationForm, JoinTeamForm, RegistrationForm
 from .models import Decision, Option, Invitation, Team, Membership
 
 
@@ -181,3 +183,40 @@ class JoinTeam(LoginRequiredMixin, FormView):
             membership.save()
 
         return super().form_valid(form)
+
+
+class Registration(CreateView):
+    model = User
+    template_name = 'votes/registration.html'
+    form_class = RegistrationForm
+    success_url = reverse_lazy('votes:registration-done')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['token'] = self.request.GET.get('token')
+        return initial
+
+    def form_valid(self, form):
+        # generate generic password
+        secret = token_urlsafe(16)  # TODO drop generic password generation
+
+        # update user profile
+        form.instance.set_password(secret)
+        form.instance.save()
+
+        # join teams
+        invitation = Invitation.objects.get(token=form.cleaned_data['token'])
+        for team in invitation.teams.all():
+            membership = Membership(
+                team=team,
+                user=form.instance,
+                invitation=invitation,
+            )
+            membership.save()
+
+        form.send_email(self.request, secret)
+        return super().form_valid(form)
+
+
+class RegistrationDone(TemplateView):
+    template_name = 'votes/registration_done.html'

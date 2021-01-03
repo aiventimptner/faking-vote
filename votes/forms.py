@@ -2,6 +2,8 @@ from datetime import timedelta
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.mail import send_mail
+from django.shortcuts import reverse
 from django.utils import timezone
 
 from .models import Decision, Option, Vote, Invitation, Team
@@ -143,3 +145,79 @@ class JoinTeamForm(forms.Form):
             raise ValidationError("Der Token ist abgelaufen.", code='invalid')
 
         return data
+
+
+class RegistrationForm(forms.ModelForm):
+    token = forms.CharField(required=False, widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['email'].required = True
+
+    def clean_token(self):
+        data = self.cleaned_data['token']
+
+        if not data:
+            raise ValidationError("Die Registrierung ist nur mit einer Einladung möglich!", code='unauthorized')
+
+        try:
+            invitation = Invitation.objects.get(token=data)
+        except ObjectDoesNotExist:
+            raise ValidationError("Die verwendete Einladung ist ungültig.", code='invalid')
+
+        if timezone.now() > invitation.expiry:
+            raise ValidationError("Der verwendete Einladung ist abgelaufen.", code='expired')
+
+        return data
+
+    def clean_first_name(self):
+        data = self.cleaned_data['first_name']
+        return data.title()
+
+    def clean_last_name(self):
+        data = self.cleaned_data['last_name']
+        return data.title()
+
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        return data.lower()
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        domain = data.split('@')[-1]
+
+        if domain != 'st.ovgu.de':
+            raise ValidationError("Es sind nur E-Mail-Adressen mit der angegebenen Domain erlaubt.", code='invalid')
+
+        return data
+
+    def send_email(self, request, secret):
+        link = f"{request.scheme}://{request.get_host()}{reverse('password_change')}"
+        send_mail(
+            "Neuer Account erstellt",
+            f"Hallo {self.cleaned_data['first_name']},\n\ndu kannst dich nun mit dem Benutzer "
+            f"'{self.cleaned_data['username']}' und dem temporären Passwort '{secret}' "
+            f"anmelden. Dein Passwort kannst du nach dem Login unter {link} ändern.\n\nViele Grüße\nFakIng",
+            None,
+            [self.cleaned_data['email']],
+        )
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email')
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'username': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+            'email': forms.TextInput(attrs={
+                'class': 'input',
+            }),
+        }
