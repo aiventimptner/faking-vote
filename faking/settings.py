@@ -82,6 +82,8 @@ EMAIL_HOST_USER = os.getenv('SMTP_USERNAME')
 
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
 
+DEFAULT_FROM_EMAIL = 'noreply@faking.cool'
+
 
 # Password validation
 
@@ -99,6 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_REDIRECT_URL = 'votes:decisions'
 
 
 # Internationalization

@@ -1,5 +1,5 @@
-{% extends 'votes/base_info.html' %}
+{% extends 'faking/base_info.html' %}
 
-{% block content %}
-    {% include 'votes/snippet_info.html' with color='warning' title="400" subtitle="Bad Request" description="Bitte was? Ich verstehe leider nur Bahnhof."  %}
+{% block body %}
+{% include 'faking/snippet_info.html' with color='warning' title="400" subtitle="Bad Request" description="Bitte was? Ich verstehe leider nur Bahnhof."  %}
 {% endblock %}

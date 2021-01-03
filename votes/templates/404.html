@@ -1,5 +1,5 @@
-{% extends 'votes/base_info.html' %}
+{% extends 'faking/base_info.html' %}
 
-{% block content %}
-    {% include 'votes/snippet_info.html' with color='warning' title="404" subtitle="Not Found" description="Hier ist keine Schatztruhe versteckt. Hast du dich vielleicht vertippt?" %}
+{% block body %}
+{% include 'faking/snippet_info.html' with color='warning' title="404" subtitle="Not Found" description="Hier ist keine Schatztruhe versteckt. Hast du dich vielleicht vertippt?" %}
 {% endblock %}

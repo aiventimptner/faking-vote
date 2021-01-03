@@ -1,35 +1,37 @@
-{% extends 'votes/base_auth.html' %}
+{% extends 'faking/base_auth.html' %}
 
 {% block header %}
-    {% include 'votes/snippet_auth.html' with title="Anmeldung" icon="fas fa-question" %}
+{% include 'faking/snippet_auth.html' with title="Anmeldung" icon="fas fa-question" %}
 {% endblock %}
 
-{% block content %}
-    <form method="post">
-        {% csrf_token %}
+{% block body %}
+<form method="post">
+    {% csrf_token %}
 
-        <input type="hidden" name="next" value="{{ next }}">
+    <input type="hidden" name="next" value="{{ next }}">
 
-        <div class="field">
-            <label class="label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-            <div class="control">
-                <input id="{{ form.username.id_for_label }}" type="text" class="input" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required>
-            </div>
+    <div class="field">
+        <label class="label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+
+        <div class="control">
+            <input id="{{ form.username.id_for_label }}" type="text" class="input" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required>
         </div>
+    </div>
 
-        <div class="field">
-            <label class="label" for="{{ form.password.id_for_label }}">
-                {{ form.password.label }}
-            </label>
-            <div class="control">
-                <input id="{{ form.password.id_for_label }}" type="password" class="input" name="password" autocomplete="current-password" required>
-            </div>
+    <div class="field">
+        <label class="label" for="{{ form.password.id_for_label }}">
+            {{ form.password.label }}
+        </label>
+
+        <div class="control">
+            <input id="{{ form.password.id_for_label }}" type="password" class="input" name="password" autocomplete="current-password" required>
         </div>
+    </div>
 
-        <button type="submit" class="button is-primary">Login</button>
+    <button type="submit" class="button is-primary">Login</button>
 
-        {% if form.errors %}
-            <p class="help is-danger">Login fehlgeschlagen. Bitte erneut probieren.</p>
-        {% endif %}
-    </form>
+    {% if form.errors %}
+    <p class="help is-danger">Login fehlgeschlagen. Bitte erneut probieren.</p>
+    {% endif %}
+</form>
 {% endblock %}

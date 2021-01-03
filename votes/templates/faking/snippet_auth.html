@@ -1,0 +1,13 @@
+<div class="card-header">
+    <p class="card-header-title">
+        {{ title }}
+    </p>
+
+    {% if icon %}
+    <a href="{% url 'password_reset' %}" class="card-header-icon">
+        <span class="icon">
+            <i class="{{ icon }}"></i>
+        </span>
+    </a>
+    {% endif %}
+</div>

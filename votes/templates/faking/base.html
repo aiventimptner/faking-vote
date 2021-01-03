@@ -1,0 +1,22 @@
+<!DOCTYPE html>{% load static %}
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Votes</title>
+
+        <link rel="stylesheet" href="{% static 'faking/css/bulma.min.css' %}">
+        <link rel="stylesheet" href="{% static 'faking/css/style.css' %}">
+
+        {% block scripts %}
+        <script src="{% static 'faking/js/font-awesome.js' %}"></script>
+        <script src="{% static 'faking/js/navbar-burger.js' %}"></script>
+        <script src="{% static 'faking/js/close-notification.js' %}"></script>
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
