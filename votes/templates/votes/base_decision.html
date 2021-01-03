@@ -1,7 +1,11 @@
 {% extends 'faking/base.html' %}
 
 {% block content %}
-<div class="container">
-    {% block column %}{% endblock %}
-</div>
+{% include 'votes/navigation.html' %}
+
+<section class="section">
+    <div class="container">
+        {% block column %}{% endblock %}
+    </div>
+</section>
 {% endblock %}
