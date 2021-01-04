@@ -25,15 +25,17 @@ class DecisionForm(forms.ModelForm):
 
     def clean_start(self):
         data = self.cleaned_data['start']
-        if data < timezone.now():
-            raise ValidationError("Der Zeitpunkt muss in der Zukunft liegen.", code='invalid')
+        if timezone.now() - timedelta(minutes=5) > data:
+            raise ValidationError("Der Zeitpunkt darf höchstens 5 Minuten in der Vergangenheit liegen.",
+                                  code='invalid')
 
         return data
 
     def clean_end(self):
         data = self.cleaned_data['end']
-        if data < timezone.now():
-            raise ValidationError("Der Zeitpunkt muss in der Zukunft liegen.", code='invalid')
+        if timezone.now() + timedelta(minutes=5) > data:
+            raise ValidationError("Der Zeitpunkt muss wenigstens 5 Minuten in der Zukunft liegen.",
+                                  code='invalid')
 
         return data
 
