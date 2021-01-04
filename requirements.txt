@@ -1,9 +1,9 @@
-Package       Version
-------------- -------
-asgiref       3.3.1
-Django        3.1.4
-pip           20.3.1
-python-dotenv 0.15.0
-pytz          2020.4
-setuptools    49.2.1
-sqlparse      0.4.1
+asgiref==3.3.1
+cffi==1.14.4
+cryptography==3.2.1
+Django==3.1.4
+pycparser==2.20
+python-dotenv==0.15.0
+pytz==2020.4
+six==1.15.0
+sqlparse==0.4.1
