@@ -47,8 +47,6 @@ class Decisions(LoginRequiredMixin, ListView):
         decisions = Decision.objects.filter(
             voters__in=[self.request.user],
             end__gt=timezone.now(),
-        ).exclude(
-            options__votes__user=self.request.user,
         ).order_by('start')
         return decisions
 
