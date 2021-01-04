@@ -121,3 +121,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / 'static'
+
+
+# Security
+
+CSRF_COOKIE_SECURE = not DEBUG
+
+SESSION_COOKIE_SECURE = not DEBUG
+
+SECURE_HSTS_SECONDS = os.getenv('SECURE_HSTS_SECONDS', 0)
+
+SECURE_SSL_REDIRECT = False
