@@ -100,7 +100,10 @@ class InvitationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['teams'].queryset = Team.objects.filter(members__in=[self.user])
+        if self.user.is_superuser:
+            self.fields['teams'].queryset = Team.objects.all()
+        else:
+            self.fields['teams'].queryset = Team.objects.filter(members__in=[self.user])
 
     def clean_expiry(self):
         data = self.cleaned_data['expiry']
