@@ -17,6 +17,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 # Application definition
 
 INSTALLED_APPS = [
+    'fontawesome-free',
     'votes.apps.VotesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
