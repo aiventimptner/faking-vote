@@ -12,9 +12,20 @@ def get_all_friends(self: User):
 User.add_to_class("friends", get_all_friends)
 
 
+class Team(models.Model):
+    name = models.CharField(max_length=150)
+    slug = models.SlugField()
+    members = models.ManyToManyField(User, related_name='teams', through='Membership')
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Decision(models.Model):
     subject = models.CharField(max_length=255)
     author = models.ForeignKey(User, related_name='decisions', on_delete=models.SET_NULL, null=True)
+    team = models.ForeignKey(Team, related_name='decisions', on_delete=models.SET_NULL, null=True)
     voters = models.ManyToManyField(User, related_name='elections', blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
@@ -37,7 +48,13 @@ class Decision(models.Model):
         now = timezone.now()
 
         if not self.pending_voters():
-            # all voters have voted
+            return {
+                'code': "finished",
+                'color': "link",
+                'icon': "fas fa-flag-checkered"
+            }
+
+        if now > self.end:
             return {
                 'code': "closed",
                 'color': "danger",
@@ -45,26 +62,16 @@ class Decision(models.Model):
             }
 
         if now < self.start:
-            # voting not started
             return {
                 'code': "pending",
-                'color': "warning",
+                'color': "info",
                 'icon': "fas fa-clock",
             }
 
-        if self.start <= now < self.end:
-            # voting possible
-            return {
-                'code': "open",
-                'color': "success",
-                'icon': "fas fa-vote-yea",
-            }
-
-        # voting closed
         return {
-            'code': "closed",
-            'color': "danger",
-            'icon': "fas fa-lock",
+            'code': "open",
+            'color': "success",
+            'icon': "fas fa-vote-yea",
         }
 
 
@@ -88,16 +95,6 @@ class Vote(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'option'], name='unique_vote'),
         ]
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=150)
-    slug = models.SlugField()
-    members = models.ManyToManyField(User, related_name='teams', through='Membership')
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
 
 
 class Invitation(models.Model):

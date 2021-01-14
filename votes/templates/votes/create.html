@@ -34,6 +34,18 @@
                 </div>
 
                 <div class="field">
+                    <label class="label" for="{{ form.team.id_for_label }}">{{ form.team.label }}</label>
+
+                    <div class="select is-fullwidth">
+                        {{ form.team }}
+                    </div>
+
+                    {% for error in form.team.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div class="field">
                     <label class="label" for="{{ form.start.id_for_label }}">{{ form.start.label }}</label>
 
                     {% include 'votes/snippet_datetime_input.html' with field=form.start %}

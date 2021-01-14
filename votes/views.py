@@ -2,7 +2,8 @@ import secrets
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -47,6 +48,8 @@ class Decisions(LoginRequiredMixin, ListView):
         decisions = Decision.objects.filter(
             voters__in=[self.request.user],
             end__gt=timezone.now(),
+        ).exclude(
+            options__votes__user=self.request.user,
         ).order_by('start')
         return decisions
 
@@ -71,13 +74,19 @@ class DecisionsOwned(LoginRequiredMixin, ListView):
 
 class Results(LoginRequiredMixin, ListView):
     model = Decision
-    template_name = 'votes/list.html'
-    queryset = Decision.objects.filter(end__lt=timezone.now()).order_by('-end')
+    template_name = 'votes/results.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = "Abgeschlossene Abstimmungen"
-        return context
+    def get_queryset(self):
+        decisions = Decision.objects.annotate(date=TruncDate('end')).filter(end__lte=timezone.now())
+
+        if 'team' in self.request.GET:
+            try:
+                team = Team.objects.get(slug=self.request.GET.get('team'))
+                decisions = decisions.filter(team=team)
+            except ObjectDoesNotExist:
+                pass
+
+        return decisions.order_by('-end')
 
 
 class ResultInfo(LoginRequiredMixin, DetailView):
@@ -130,6 +139,12 @@ class VoteCreate(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
+
+        # end voting if all voters have voted
+        if not form.decision.pending_voters():
+            form.decision.end = timezone.now()
+            form.decision.save()
+
         return super().form_valid(form)
 
 

@@ -13,10 +13,15 @@ class DecisionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        teams = self.user.teams.all()
+        self.fields['team'].queryset = teams
+        if len(teams) == 1:
+            self.fields['team'].initial = teams[0]
+            self.fields['team'].disabled = True
+
         self.fields['voters'].required = True
-        self.fields['voters'].queryset = User.objects.filter(
-            teams__in=self.user.teams.all(),
-        ).distinct().order_by('first_name', 'last_name')
+        self.fields['voters'].queryset = User.objects.filter(teams__in=teams).distinct().order_by('first_name',
+                                                                                                  'last_name')
         self.fields['voters'].label_from_instance = self.label_from_instance
 
     @staticmethod
@@ -55,8 +60,9 @@ class DecisionForm(forms.ModelForm):
 
     class Meta:
         model = Decision
-        fields = ['subject', 'voters', 'start', 'end']
+        fields = ['subject', 'team', 'voters', 'start', 'end']
         labels = {
+            'team': "Organ",
             'subject': "Gegenstand",
             'voters': "Stimmberechtigt",
             'start': "Beginn",

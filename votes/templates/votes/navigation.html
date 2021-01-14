@@ -11,15 +11,25 @@
 
     <div id="navbarMain" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item" href="{% url 'votes:decisions' %}">Stimme abgeben</a>
-            <a class="navbar-item" href="{% url 'votes:results' %}">Ergebnisse</a>
+            <a class="navbar-item" href="{% url 'votes:decisions' %}">Abstimmen</a>
 
             <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">Abstimmungen</a>
+                <a class="navbar-link">Erstellen</a>
 
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="{% url 'votes:create' %}">Neu erstellen</a>
-                    <a class="navbar-item" href="{% url 'votes:owned' %}">Eigene anzeigen</a>
+                    <a class="navbar-item" href="{% url 'votes:create' %}">Einfach</a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item" href="{% url 'votes:owned' %}">Alle anzeigen</a>
+                </div>
+            </div>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">Ergebnisse</a>
+
+                <div class="navbar-dropdown">
+                    {% for team in user.teams.all %}
+                    <a class="navbar-item" href="{% url 'votes:results' %}?team={{ team.slug }}">{{ team }}</a>
+                    {% endfor %}
                 </div>
             </div>
         </div>

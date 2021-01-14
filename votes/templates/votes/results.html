@@ -1,0 +1,30 @@
+{% extends 'votes/base_decision.html' %}
+
+{% block main %}
+<div class="notification">
+    <button class="delete"></button>
+    Abstimmungen werden vorzeitig geschlossen, sobald alle stimmberechtigten Mitglieder daran teilgenommen haben.
+    Entsprechende Abstimmungen werden jedoch erst nach Ablauf der regulären Frist gelistet.
+</div>
+
+{% regroup decision_list by date as date_list %}
+{% for date in date_list %}
+<nav class="panel is-primary">
+    <p class="panel-heading">
+        {{ title }}{{ date.grouper }}
+    </p>
+
+    {% for decision in date.list %}
+    <a href="{% url 'votes:info' decision.id %}" class="panel-block">
+        <span class="panel-icon has-text-{{ decision.state.color }}">
+            <i class="{{ decision.state.icon }}" aria-hidden="true"></i>
+        </span>
+
+        <p>{{ decision.subject }}</p>
+    </a>
+    {% empty %}
+    <p class="panel-block" disabled>Aktuell sind keine Abstimmungen verfügbar.</p>
+    {% endfor %}
+</nav>
+{% endfor %}
+{% endblock %}
