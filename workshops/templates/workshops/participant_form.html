@@ -1,0 +1,95 @@
+{% extends 'workshops/base.html' %}
+
+{% block main %}
+<div class="content">
+    <h1>Anmeldung</h1>
+
+    <article class="message is-info">
+        <div class="message-header">
+            <p class="mb-0">Datenschutz-Hinweis</p>
+            <button class="delete" aria-label="delete"></button>
+        </div>
+        <div class="message-body">
+            Wir speichern deine angegebene Daten für <strong>maximal 3 Monate</strong>, um mit dir in Kontakt zu treten und ggf.
+            bei Anmeldung zum entsprechenden Workshops dir auch ein Paket zu schicken. Deine Daten werden nicht
+            an Dritte weitergegeben und von uns vertraulich behandelt! Nach Ablauf der Frist löschen wir deine
+            personenbezogenen Daten unwiderruflich von unseren Servern.
+        </div>
+    </article>
+
+    <div class="box">
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- First name -->
+            <div class="field">
+                <label class="label" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                <div class="control">
+                    {{ form.first_name }}
+                </div>
+                {% for error in form.first_name.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Last name -->
+            <div class="field">
+                <label class="label" for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+                <div class="control">
+                    {{ form.last_name }}
+                </div>
+                {% for error in form.last_name.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Email address -->
+            <div class="field">
+                <label class="label" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                <div class="control">
+                    {{ form.email }}
+                </div>
+                {% for error in form.email.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Workshops -->
+            <div class="field">
+                <label class="label" for="{{ form.workshops.id_for_label }}">{{ form.workshops.label }}</label>
+                {% for checkbox in form.workshops %}
+                <div class="control">
+                    <label class="checkbox" for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.tag }}
+                        {{ checkbox.choice_label }}
+                    </label>
+                </div>
+                {% empty %}
+                <p class="has-text-danger">Keine Workshops verfügbar!</p>
+                {% endfor %}
+                {% for error in form.workshops.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Comment -->
+            <div class="field">
+                <label class="label" for="{{ form.comment.id_for_label }}">{{ form.comment.label }}</label>
+                <div class="control">
+                    {{ form.comment }}
+                </div>
+                {% for error in form.comment.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="control">
+                <button type="submit" class="button is-primary">Anmelden</button>
+                {% for error in form.non_field_errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

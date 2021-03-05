@@ -18,6 +18,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
 INSTALLED_APPS = [
     'fontawesome-free',
+    'workshops.apps.WorkshopsConfig',
     'votes.apps.VotesConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -1,0 +1,32 @@
+{% extends 'workshops/base.html' %}
+
+{% block main %}
+<div class="content">
+    <h1 class="title">Unsere Workshop-Angebote</h1>
+    <p class="subtitle">Ein Angebot vom <a href="https://fasra-fhw.jimdofree.com/">FasRaFHW</a></p>
+
+    <h3>Liste aller Workshops</h3>
+    <div class="columns is-multiline">
+        {% for workshop in object_list %}
+        <div class="column is-one-quarter">
+            <h5 class="mb-0">{{ workshop.title }}</h5>
+            <p>
+                {{ workshop.date }}
+                {% if workshop.desc %}
+                <br>
+                {{ workshop.desc }}
+                {% endif %}
+            </p>
+        </div>
+        {% empty %}
+        <div class="column is-fullwidth">
+            Es sind aktuell leider keine Workshops verfügbar.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if object_list %}
+    <a class="button is-primary is-fullwidth is-large" href="{% url 'workshops:workshop-registration' %}">Zur Anmeldung</a>
+    {% endif %}
+</div>
+{% endblock %}

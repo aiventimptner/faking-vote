@@ -1,0 +1,10 @@
+{% extends 'faking/base.html' %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        {% block main %}{% endblock %}
+    </div>
+</section>
+{% include 'workshops/footer.html' %}
+{% endblock %}
