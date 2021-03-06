@@ -7,7 +7,7 @@ from workshops.models import Workshop, Template
 
 class WorkshopList(ListView):
     model = Workshop
-    queryset = Workshop.objects.filter(date__gte=date.today())
+    queryset = Workshop.objects.exclude(status=Workshop.DRAFT).filter(date__gte=date.today())
 
 
 class ParticipantCreate(CreateView):

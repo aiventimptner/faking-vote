@@ -3,6 +3,15 @@ from django.db import models
 
 
 class Workshop(models.Model):
+    DRAFT = 'd'
+    PUBLISHED = 'p'
+    WITHDRAWN = 'w'
+    STATUS_CHOICES = [
+        (DRAFT, 'Draft'),
+        (PUBLISHED, 'Published'),
+        (WITHDRAWN, 'Withdrawn'),
+    ]
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=DRAFT)
     title = models.CharField(max_length=250)
     desc = models.TextField('description', blank=True)
     date = models.DateField()

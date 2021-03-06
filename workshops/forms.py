@@ -26,7 +26,7 @@ class ParticipantForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['workshops'].queryset = Workshop.objects.filter(date__gte=date.today())
+        self.fields['workshops'].queryset = Workshop.objects.filter(status=Workshop.PUBLISHED, date__gte=date.today())
 
     def clean_email(self):
         data = self.cleaned_data['email']
