@@ -35,3 +35,11 @@ class Participant(models.Model):
     def full_name(self) -> str:
         """Return full_name of participant"""
         return f"{self.first_name} {self.last_name}"
+
+
+class Template(models.Model):
+    name = models.SlugField(unique=True)
+    text = models.TextField()
+
+    def __str__(self):
+        return self.name

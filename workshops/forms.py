@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 
-from .models import Participant, Workshop
+from .models import Participant, Workshop, Template
 
 
 class ParticipantForm(forms.ModelForm):
@@ -35,8 +35,9 @@ class ParticipantForm(forms.ModelForm):
         return data
 
     def send_mail(self):
+        template = Template.objects.get(name='registration_mail')
         workshops = self.cleaned_data['workshops'].values_list('title', flat=True)
         send_mail("Bestätigung der Workshop-Anmeldung",
-                  f"Hallo {self.cleaned_data['first_name']},\n\nhiermit bestätigen wir deine Anmeldung zu den folgenden"
-                  f" Workshops: {', '.join(workshops)}\n\nViele Grüße\nDein FasRaFHW",
+                  template.text.format(first_name=self.cleaned_data['first_name'],
+                                       workshops='\n'.join([f"- {workshop}" for workshop in workshops])),
                   None, [self.cleaned_data['email']])
